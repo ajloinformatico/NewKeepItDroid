@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">NewKeepItDroid</string>
+    <string name="back_arrow">Back to the previous screen</string>
+    <string name="save_icon">Save</string>
+    <string name="my_notes">My Notes</string>
+    <string name="ascend_filter">Filter by ascending order</string>
+    <string name="descend_filter">Filter by descending order</string>
+    <string name="add_note">Add note</string>
+    <string name="creation_date_filter">Filter by creation date</string>"
+    <string name="search_your_note">Search your note</string>
+    <string name="filter_by">Filter by</string>
+    <string name="add_a_new_note">Add a new note</string>
+    <string name="title">Title</string>
+    <string name="more_options">Show more options</string>
+    <string name="delete_note">Delete note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="share_note">Share note</string>
 </resources>
