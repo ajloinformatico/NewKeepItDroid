@@ -19,5 +19,7 @@
     <string name="note_date">xx/xx/xxxx</string>
     <string name="expand_and_collapse">Expand and collapse</string>
     <string name="go_to_detail">Go to detail</string>
+    <string name="search">Search..</string>
+    <string name="update_note">Update note</string>"
 </resources>
 
