@@ -15,4 +15,8 @@
     <string name="delete_note">Delete note</string>
     <string name="edit_note">Edit note</string>
     <string name="share_note">Share note</string>
+    <string name="note_content">Note content</string>
+    <string name="note_date">xx/xx/xxxx</string>
+    <string name="expand_and_collapse">Expand and collapse</string>
 </resources>
+
