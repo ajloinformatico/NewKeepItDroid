@@ -18,5 +18,6 @@
     <string name="note_content">Note content</string>
     <string name="note_date">xx/xx/xxxx</string>
     <string name="expand_and_collapse">Expand and collapse</string>
+    <string name="go_to_detail">Go to detail</string>
 </resources>
 

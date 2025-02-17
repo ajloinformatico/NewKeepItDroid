@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import es.infolojo.newkeepitdroid.ui.screens.home.HomeScreen
+import es.infolojo.newkeepitdroid.ui.screens.search.SearchScreen
 import es.infolojo.newkeepitdroid.ui.theme.NewKeepItDroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )*/
-                    HomeScreen()
+                    // HomeScreen()
+                    SearchScreen()
                 }
             }
         }
