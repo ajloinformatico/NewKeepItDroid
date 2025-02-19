@@ -31,9 +31,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     )*/
                     // HomeScreen(modifier = Modifier.padding(innerPadding))
-                    SearchScreen(modifier = Modifier.padding(innerPadding))
+                    // SearchScreen(modifier = Modifier.padding(innerPadding))
                     // AddScreen(modifier = Modifier.padding(innerPadding))
-                    // UpdateScreen(modifier = Modifier.padding(innerPadding))
+                    UpdateScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
