@@ -20,6 +20,12 @@
     <string name="expand_and_collapse">Expand and collapse</string>
     <string name="go_to_detail">Go to detail</string>
     <string name="search">Search..</string>
-    <string name="update_note">Update note</string>"
+    <string name="update_note">Update note</string>
+    <string name="title_placeholder">Title..</string>
+    <string name="content_placeholder">Content..</string>
+    <string name="month_name_preview">MARCH</string>
+    <string name="day_of_month_preview">25</string>
+    <string name="day_of_week_preview">THURSDAY</string>
+    <string name="year_preview">2025</string>"
 </resources>
 

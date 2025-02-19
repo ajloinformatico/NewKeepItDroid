@@ -32,11 +32,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeScreenViewModel? = hiltViewModel(),
+    isPreview: Boolean = false
+) {
     Scaffold(
         topBar = {
             // appBar preparada para incluir títulos he iconos
@@ -155,5 +160,8 @@ fun HomeScreen() {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        viewModel = null,
+        isPreview = true
+    )
 }

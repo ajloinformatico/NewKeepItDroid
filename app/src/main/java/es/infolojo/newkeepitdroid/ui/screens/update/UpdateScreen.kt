@@ -39,13 +39,14 @@ import es.infolojo.newkeepitdroid.R
 private const val CLASS_NAME = "AddScreen"
 
 @Composable
-fun UpdateScreen() {
+fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
     // estructura / esqueleto
     Scaffold(
+        modifier = modifier.fillMaxWidth(),
         // dentro monta su topbar
         topBar = {
-            // fila que ocupa todo el ancho
-            Row(modifier = Modifier.fillMaxWidth()) {
+            // fila que ocupa el tamaño completo de la pantalla
+            Row {
                 // Icono pata volver atrás
                 IconButton(
                     onClick = { Log.d(CLASS_NAME, "Back button clicked") }
@@ -88,6 +89,7 @@ fun UpdateScreen() {
                         ) {
                             append("MARCH")
                         }
+                        append(" ")
                         append("25")
                     }
                 )
@@ -121,11 +123,12 @@ fun UpdateScreen() {
                     onValueChange = { /* TODO */ },
                     placeholder = {
                         Text(
-                            text = "Note title",
+                            text = stringResource(R.string.title_placeholder),
                             color = Color.Gray
                         )
                     }
                 )
+                HorizontalDivider(modifier = Modifier.height(2.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
@@ -145,7 +148,7 @@ fun UpdateScreen() {
                     onValueChange = { /* TODO */ },
                     placeholder = {
                         Text(
-                            text = "Note title",
+                            text = stringResource(R.string.content_placeholder),
                             color = Color.Gray,
                             fontWeight = FontWeight.Light
                         )
@@ -160,5 +163,5 @@ fun UpdateScreen() {
 @Preview(showBackground = true)
 @Composable
 fun UpdateScreenPreview() {
-    UpdateScreen()
+    UpdateScreen(isPreview = true)
 }

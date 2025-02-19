@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,18 +34,24 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
 
 private const val CLASS_NAME = "AddScreen"
 
 @Composable
-fun AddScreen() {
+fun AddScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AddScreenViewModel? = hiltViewModel(),
+    isPreview: Boolean = false
+) {
     // estructura / esqueleto
     Scaffold(
         // dentro monta su topbar
+        modifier = modifier.fillMaxWidth(),
         topBar = {
-            // fila que ocupa todo el ancho
-            Row(modifier = Modifier.fillMaxWidth()) {
+            // fila que ocupa el contenido completo de la pantalla
+            Row {
                 // Icono pata volver atrás
                 IconButton(
                     onClick = { Log.d(CLASS_NAME, "Back button clicked") }
@@ -61,7 +66,10 @@ fun AddScreen() {
                 Spacer(modifier = Modifier.weight(1f))
                 // Icono de guardar
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "save button clicked") }
+                    onClick = {
+                        viewModel?.insertNote()
+                    },
+                    enabled = viewModel?.buttonValidated == true
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.baseline_save_24),
@@ -87,12 +95,25 @@ fun AddScreen() {
                                 color = MaterialTheme.colorScheme.primary
                             )
                         ) {
-                            append("MARCH")
+                            append(
+                                viewModel?.takeIf {
+                                    !isPreview
+                                }?.dateModel?.month?.monthName ?: stringResource(R.string.month_name_preview)
+                            )
                         }
-                        append("25")
+                        append(" ")
+                        append(
+                            viewModel?.takeIf {
+                                !isPreview
+                            }?.dateModel?.dayOfMonth ?: stringResource(R.string.day_of_month_preview)
+                        )
                     }
                 )
-                Text(text = "2025 WEDNESDAY")
+                val yearAndDayTest: String = viewModel?.let {
+                    "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
+                } ?: "${stringResource(R.string.month_name_preview)} ${stringResource(R.string.day_of_week_preview)}"
+
+                Text(text = yearAndDayTest)
                 // endregion bloqueCalendario
             }
 
@@ -118,15 +139,20 @@ fun AddScreen() {
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.title.orEmpty(),
+                    onValueChange = {
+                        // when change we update viewmodel value
+                        viewModel?.updateTitle(it)
+                    },
                     placeholder = {
                         Text(
-                            text = "Note title",
+                            // set the state by updating title mutableSte
+                            text = stringResource(R.string.title_placeholder),
                             color = Color.Gray
                         )
                     }
                 )
+                HorizontalDivider(modifier = Modifier.height(2.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
@@ -142,11 +168,13 @@ fun AddScreen() {
                         imeAction = ImeAction.Next,
                         capitalization = KeyboardCapitalization.Sentences
                     ),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.content.orEmpty(),
+                    onValueChange = {
+                        viewModel?.updateContent(it)
+                    },
                     placeholder = {
                         Text(
-                            text = "Note title",
+                            text = stringResource(R.string.content_placeholder),
                             color = Color.Gray,
                             fontWeight = FontWeight.Light
                         )
@@ -161,5 +189,5 @@ fun AddScreen() {
 @Preview(showBackground = true)
 @Composable
 fun AddScreenPreview() {
-    AddScreen()
+    AddScreen(viewModel = null, isPreview = true)
 }
