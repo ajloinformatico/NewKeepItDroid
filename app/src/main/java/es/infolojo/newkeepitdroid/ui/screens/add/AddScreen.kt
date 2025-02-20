@@ -1,5 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.add
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,16 +36,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.R
 
 private const val CLASS_NAME = "AddScreen"
 
 @Composable
 fun AddScreen(
-    modifier: Modifier = Modifier,
     viewModel: AddScreenViewModel? = hiltViewModel(),
-    isPreview: Boolean = false
+    modifier: Modifier = Modifier,
+    isPreview: Boolean = false,
+    mainEvents: (MainEvents) -> Unit = {}
 ) {
+    // needed values
+    val noteSavedMessage = stringResource(R.string.note_saved)
+
     // estructura / esqueleto
     Scaffold(
         // dentro monta su topbar
@@ -68,6 +74,7 @@ fun AddScreen(
                 IconButton(
                     onClick = {
                         viewModel?.insertNote()
+                        mainEvents(MainEvents.ShowMessage(noteSavedMessage))
                     },
                     enabled = viewModel?.buttonValidated == true
                 ) {
@@ -111,7 +118,7 @@ fun AddScreen(
                 )
                 val yearAndDayTest: String = viewModel?.let {
                     "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
-                } ?: "${stringResource(R.string.month_name_preview)} ${stringResource(R.string.day_of_week_preview)}"
+                } ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
 
                 Text(text = yearAndDayTest)
                 // endregion bloqueCalendario

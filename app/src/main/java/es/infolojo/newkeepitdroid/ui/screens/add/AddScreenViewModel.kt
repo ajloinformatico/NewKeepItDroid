@@ -1,5 +1,7 @@
 package es.infolojo.newkeepitdroid.ui.screens.add
 
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +11,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.infolojo.newkeepitdroid.domain.data.bo.NoteBO
 import es.infolojo.newkeepitdroid.domain.usecase.InsertNoteUseCase
 import es.infolojo.newkeepitdroid.domain.data.common.DateModel
+import es.infolojo.newkeepitdroid.utils.validateContent
+import es.infolojo.newkeepitdroid.utils.validateTitle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,15 +40,15 @@ class AddScreenViewModel @Inject constructor(
     var content by mutableStateOf("")
 
     // validations
-    var titleValidated: Boolean by mutableStateOf(false)
-    var contentValidated: Boolean by mutableStateOf(false)
+    private var titleValidated: Boolean by mutableStateOf(false)
+    private var contentValidated: Boolean by mutableStateOf(false)
     val buttonValidated: Boolean
         get() = titleValidated && contentValidated
     // endregion attr
 
     // region public methods
     fun insertNote() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             insertNoteUseCase(
                 NoteBO(
                     title = title,
@@ -59,7 +64,7 @@ class AddScreenViewModel @Inject constructor(
      */
     fun updateTitle(newTitle: String) {
         title = newTitle
-        validateTitle()
+        titleValidated = newTitle.validateTitle()
     }
 
     /**
@@ -67,28 +72,7 @@ class AddScreenViewModel @Inject constructor(
      */
     fun updateContent(newContent: String) {
         content = newContent
-        validateContent()
+        contentValidated = newContent.validateContent()
     }
-
     // endregion public methods
-
-    // region private methods
-    /**
-     * Validates the title of the note and update titleValidated state accordingly.
-     */
-    private fun validateTitle(): Boolean {
-        val result = title.isNotEmpty() && title.length < 30
-        titleValidated = result
-        return result
-    }
-
-    /**
-     * Validates the content of the note and update contentValidated state accordingly.
-     */
-    private fun validateContent(): Boolean {
-        val result = content.isNotEmpty()
-        contentValidated = result
-        return result
-    }
-    // endregion private methods
 }

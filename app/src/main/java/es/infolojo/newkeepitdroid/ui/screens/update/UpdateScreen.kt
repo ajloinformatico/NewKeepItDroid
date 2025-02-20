@@ -1,6 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.update
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,12 +33,23 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.R
 
-private const val CLASS_NAME = "AddScreen"
-
 @Composable
-fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
+fun UpdateScreen(
+    modifier: Modifier = Modifier,
+    isPreview: Boolean = false,
+    viewModel: UpdateScreenViewModel? = hiltViewModel(),
+    mainEvents: (MainEvents) -> Unit = {},
+    noteId: Int
+) {
+    // needed values
+    val noteUpdatedMessage = stringResource(R.string.note_updated)
+
+    // launch the viewModel
+    viewModel?.init(noteId)
     // estructura / esqueleto
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -49,7 +59,9 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
             Row {
                 // Icono pata volver atrás
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "Back button clicked") }
+                    onClick = {
+                        // TODO REAL IMPLEMENTATION
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -61,7 +73,11 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                 Spacer(modifier = Modifier.weight(1f))
                 // Icono de guardar
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "save button clicked") }
+                    onClick = {
+                        viewModel?.updateNote()
+                        mainEvents(MainEvents.ShowMessage(noteUpdatedMessage))
+                    },
+                    enabled = viewModel?.updatedValidated == true
                 ) {
                     Icon(
                         painterResource(R.drawable.baseline_update_24),
@@ -87,13 +103,25 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                                 color = MaterialTheme.colorScheme.primary
                             )
                         ) {
-                            append("MARCH")
+                            append(
+                                viewModel?.takeIf {
+                                    !isPreview
+                                }?.dateModel?.month?.monthName ?: stringResource(R.string.month_name_preview)
+                            )
                         }
                         append(" ")
-                        append("25")
+                        append(
+                            viewModel?.takeIf {
+                                !isPreview
+                            }?.dateModel?.dayOfMonth ?: stringResource(R.string.day_of_month_preview)
+                        )
                     }
                 )
-                Text(text = "2025 WEDNESDAY")
+                val yearAndDayTest: String = viewModel?.takeIf { !isPreview }?.let {
+                    "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
+                } ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
+
+                Text(text = yearAndDayTest)
                 // endregion bloqueCalendario
             }
 
@@ -119,8 +147,8 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.title.orEmpty(),
+                    onValueChange = { viewModel?.updateTitle(it) },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.title_placeholder),
@@ -144,8 +172,8 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                         imeAction = ImeAction.Next,
                         capitalization = KeyboardCapitalization.Sentences
                     ),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.content.orEmpty(),
+                    onValueChange = { viewModel?.updateContent(it) },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.content_placeholder),
@@ -163,5 +191,5 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 fun UpdateScreenPreview() {
-    UpdateScreen(isPreview = true)
+    UpdateScreen(isPreview = true, viewModel = null, noteId = 0)
 }
