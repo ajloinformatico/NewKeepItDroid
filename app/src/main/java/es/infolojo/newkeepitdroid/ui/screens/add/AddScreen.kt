@@ -1,6 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.add
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,13 +42,18 @@ private const val CLASS_NAME = "AddScreen"
 
 @Composable
 fun AddScreen(
-    viewModel: AddScreenViewModel? = hiltViewModel(),
     modifier: Modifier = Modifier,
+    viewModel: AddScreenViewModel? = hiltViewModel(),
     isPreview: Boolean = false,
     mainEvents: (MainEvents) -> Unit = {}
 ) {
     // needed values
+    /** TODO UPDATE WITH MAIN EVENTS
     val noteSavedMessage = stringResource(R.string.note_saved)
+
+    if (viewModel?.noteAlReadyInDataBase == true) {
+        mainEvents(MainEvents.ShowMessage(stringResource(R.string.note_already_in_database)))
+    }*/
 
     // estructura / esqueleto
     Scaffold(
@@ -74,7 +78,8 @@ fun AddScreen(
                 IconButton(
                     onClick = {
                         viewModel?.insertNote()
-                        mainEvents(MainEvents.ShowMessage(noteSavedMessage))
+                        // TODO UPDATE WITH MAIN EVENTS
+                        // mainEvents(MainEvents.ShowMessage(noteSavedMessage))
                     },
                     enabled = viewModel?.buttonValidated == true
                 ) {

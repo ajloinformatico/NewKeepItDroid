@@ -29,5 +29,6 @@
     <string name="year_preview">2025</string>"
     <string name="note_updated">Note has been updated</string>
     <string name="note_saved">Note has been saved</string>
+    <string name="note_already_in_database">The note is already in database</string>"
     <string name="ok">OK</string>"
 </resources>

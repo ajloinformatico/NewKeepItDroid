@@ -46,10 +46,8 @@ fun UpdateScreen(
     noteId: Int
 ) {
     // needed values
-    val noteUpdatedMessage = stringResource(R.string.note_updated)
-
     // launch the viewModel
-    viewModel?.init(noteId)
+    viewModel?.init(noteId, mainEvents)
     // estructura / esqueleto
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -75,7 +73,6 @@ fun UpdateScreen(
                 IconButton(
                     onClick = {
                         viewModel?.updateNote()
-                        mainEvents(MainEvents.ShowMessage(noteUpdatedMessage))
                     },
                     enabled = viewModel?.updatedValidated == true
                 ) {
@@ -148,7 +145,9 @@ fun UpdateScreen(
                     ),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                     value = viewModel?.title.orEmpty(),
-                    onValueChange = { viewModel?.updateTitle(it) },
+                    onValueChange = {
+                        viewModel?.updateTitleAndContent(newTitle = it)
+                    },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.title_placeholder),
@@ -173,7 +172,7 @@ fun UpdateScreen(
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     value = viewModel?.content.orEmpty(),
-                    onValueChange = { viewModel?.updateContent(it) },
+                    onValueChange = { viewModel?.updateTitleAndContent(newContent = it) },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.content_placeholder),

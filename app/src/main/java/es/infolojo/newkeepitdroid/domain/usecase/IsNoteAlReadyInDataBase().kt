@@ -18,20 +18,18 @@ import javax.inject.Inject
  */
 class IsNoteAlReadyInDataBase @Inject constructor(
     private val localRepository: LocalRepository
-): suspend ((NoteBO) -> Boolean) {
+): suspend ((NoteBO, ((Boolean) -> Unit)) -> Unit) {
 
-    override suspend fun invoke(note: NoteBO): Boolean {
-        var result = false
+    override suspend fun invoke(note: NoteBO, result: (Boolean) -> Unit) {
         localRepository.getNotesByTitleQuery(note.title).map { it.toBO() }.collect { notes ->
             if (notes.areNoteContentInsideTheList(note)) {
-                result = true
+                result(true)
             } else {
                 localRepository.getNotesByContentQuery(note.content).map { it.toBO() }.collect { notesContent ->
-                    result = notesContent.areNoteContentInsideTheList(note)
+                    result(notesContent.areNoteContentInsideTheList(note))
                 }
             }
         }
-        return result
     }
 
     private fun List<NoteBO>.areNoteContentInsideTheList(note: NoteBO): Boolean = any { it.areNoteContentTheSame(note) }

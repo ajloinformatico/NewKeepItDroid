@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.infolojo.newkeepitdroid.domain.data.bo.NoteBO
 import es.infolojo.newkeepitdroid.domain.usecase.InsertNoteUseCase
 import es.infolojo.newkeepitdroid.domain.data.common.DateModel
+import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
 import es.infolojo.newkeepitdroid.utils.validateContent
 import es.infolojo.newkeepitdroid.utils.validateTitle
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AddScreenViewModel @Inject constructor(
-    private val insertNoteUseCase: InsertNoteUseCase
+    private val insertNoteUseCase: InsertNoteUseCase,
+    private val isNoteAlReadyInDataBase: IsNoteAlReadyInDataBase,
 ): ViewModel() {
     // region attr
 
@@ -42,8 +44,9 @@ class AddScreenViewModel @Inject constructor(
     // validations
     private var titleValidated: Boolean by mutableStateOf(false)
     private var contentValidated: Boolean by mutableStateOf(false)
+    var noteAlReadyInDataBase: Boolean by mutableStateOf(false)
     val buttonValidated: Boolean
-        get() = titleValidated && contentValidated
+        get() = titleValidated && contentValidated && !noteAlReadyInDataBase
     // endregion attr
 
     // region public methods
@@ -63,16 +66,43 @@ class AddScreenViewModel @Inject constructor(
      * Update note title with given [newTitle] and validate it.
      */
     fun updateTitle(newTitle: String) {
+        restartNoteAlreadyInDataBase()
         title = newTitle
         titleValidated = newTitle.validateTitle()
+        checkIfNoteAlReadyInDataBase()
+
     }
 
     /**
      * Update note content with given [newContent] and validate it.
      */
     fun updateContent(newContent: String) {
+        restartNoteAlreadyInDataBase()
         content = newContent
         contentValidated = newContent.validateContent()
+        checkIfNoteAlReadyInDataBase()
     }
     // endregion public methods
+
+    // region private methods
+    private fun restartNoteAlreadyInDataBase() {
+        noteAlReadyInDataBase = false
+    }
+
+    private fun checkIfNoteAlReadyInDataBase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            isNoteAlReadyInDataBase(
+                NoteBO(
+                    title = title,
+                    content = content,
+                    date = dateModel.time
+                )
+            ) {
+                noteAlReadyInDataBase = it
+            }
+        }
+    }
+    // endregion private methods
+
+
 }
