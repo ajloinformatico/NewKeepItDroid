@@ -35,7 +35,11 @@ class AddScreenViewModel @Inject constructor(
 ) : ViewModel() {
     // region attr
     private var mainEvents: (MainEvents) -> Unit = {}
+
+    // save the original id after add a note in the dataBase
     private var noteAddedId = 0L
+
+    // Check if the note has been added to the dataBase after add the new note to make an update instead of an insert
     private val noteAdded: Boolean
         get() = noteAddedId != 0L
     val dateModel: DateModel
@@ -54,18 +58,25 @@ class AddScreenViewModel @Inject constructor(
     // endregion attr
 
     // region public methods
+    /**
+     * Init the viewModel by saving the [mainEvents] in a attr
+     * and restarting all ui states to the original values
+     */
     fun init(mainEvents: (MainEvents) -> Unit) {
         this.mainEvents = mainEvents
         titleValidated = false
         contentValidated = false
+        noteAddedId = 0L
         noteAlReadyInDataBase = false
     }
 
     /**
-     * In a IO coroutine create a new note by using current [title] and [content] and [dateModel]
-     * states, with this new note by using [insertNoteUseCase] save it in the dataBase
-     * after that update [noteAdded] is true because we do not want to check more this note
-     * because we have a new note in the dataBase with the same values of [title] and [content]
+     * Insert or update the note in the database
+     * first create the new note with the states [title], [content] and [dateModel],
+     * also use [noteAddedId] if we have added a note before, otherwise use null.
+     * If we have to update we just update and switch io to the main thread to show a message.
+     * If we add instead of update it will be added in the next insert, and we will save the id in [noteAddedId]
+     * and we will update the state [noteAlReadyInDataBase] to false, so as not to do more inserts.
      */
     fun insertNote() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -82,6 +93,7 @@ class AddScreenViewModel @Inject constructor(
                 }
             } else {
                 val newNoteAddedId = insertNoteUseCase(newNote)
+                // update values to do not make more inserts in the dataBase
                 noteAddedId = newNoteAddedId
                 noteAlReadyInDataBase = false
                 viewModelScope.launch(Dispatchers.Main) {
@@ -118,6 +130,8 @@ class AddScreenViewModel @Inject constructor(
      * and do not launch any message and do not change the thread
      */
     private fun checkIfNoteAlReadyInDataBase() {
+        // this check will be done only for the first insert because in the update
+        // it has no sense
         viewModelScope.takeIf { !noteAdded }?.launch(Dispatchers.IO) {
             isNoteAlReadyInDataBase(
                 NoteBO(
