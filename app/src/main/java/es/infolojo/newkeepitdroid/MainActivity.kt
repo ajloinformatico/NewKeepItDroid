@@ -9,34 +9,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import es.infolojo.newkeepitdroid.ui.screens.add.AddScreen
+import es.infolojo.newkeepitdroid.navigation.NewKeepItDroidNavHost
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.ui.theme.NewKeepItDroidTheme
 import es.infolojo.newkeepitdroid.utils.ToastMaker
 
 sealed interface MainEvents {
     data class ShowMessage(val message: UIMessagesVO) : MainEvents
+    data class CustomMessage(val message: String) : MainEvents
 }
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             NewKeepItDroidTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    /**Greeting(
-                    name = "Android",
-                    modifier = Modifier.padding(innerPadding)
-                    )*/
-                    // HomeScreen(modifier = Modifier.padding(innerPadding))
-                    // SearchScreen(modifier = Modifier.padding(innerPadding))
-                    AddScreen(
+                    NewKeepItDroidNavHost(
                         modifier = Modifier.padding(innerPadding),
                         mainEvents = ::manageEvents
                     )
-                    // UpdateScreen(modifier = Modifier.padding(innerPadding), noteId = 35, mainEvents = ::manageEvents)
                 }
             }
         }
@@ -53,6 +48,9 @@ class MainActivity : ComponentActivity() {
                     UIMessagesVO.NO_MESSAGE -> return
                 }
             )
+            is MainEvents.CustomMessage -> ToastMaker.showMessage(this, event.message)
         }
     }
 }
+
+
