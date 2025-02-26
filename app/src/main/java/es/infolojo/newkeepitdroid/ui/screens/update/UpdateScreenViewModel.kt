@@ -132,7 +132,6 @@ class UpdateScreenViewModel @Inject constructor(
     private fun updateTitle(newTitle: String) {
         titleValidated = newTitle.validateTitle()
         title = newTitle
-
     }
 
     private fun updateContent(newContent: String) {
