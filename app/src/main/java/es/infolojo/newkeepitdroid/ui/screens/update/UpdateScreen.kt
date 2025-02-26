@@ -43,9 +43,8 @@ fun UpdateScreen(
     isPreview: Boolean = false,
     viewModel: UpdateScreenViewModel? = hiltViewModel(),
     mainEvents: (MainEvents) -> Unit = {},
-    noteId: Int
+    noteId: Long
 ) {
-    // needed values
     // launch the viewModel
     viewModel?.init(noteId, mainEvents)
     // estructura / esqueleto

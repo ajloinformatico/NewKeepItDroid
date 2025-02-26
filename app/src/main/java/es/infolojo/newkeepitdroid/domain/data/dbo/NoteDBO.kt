@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class NoteDBO(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
     val content: String,
     val date: Long // Room do not support Date type

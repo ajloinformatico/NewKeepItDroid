@@ -49,7 +49,7 @@ class UpdateScreenViewModel @Inject constructor(
     /**
      * Get note and update view by using mutableStates
      */
-    fun init(noteId: Int, mainEvents: ((MainEvents) -> Unit)) {
+    fun init(noteId: Long, mainEvents: ((MainEvents) -> Unit)) {
         this.mainEvents = mainEvents
         viewModelScope.launch(Dispatchers.IO) {
             getNoteByIdUseCase(SortOrder.ById(noteId)).collect {
@@ -85,12 +85,6 @@ class UpdateScreenViewModel @Inject constructor(
      *    - Always updates both the title and content, even if only one of `newTitle` or `newContent` is provided.
      *    - If `newTitle` or `newContent` is `null`, it uses the current `title` or `content`, respectively.
      *    - Calls `updateTitle()` and `updateContent()` to process the title and content updates.
-     *
-     * Side Effects:
-     *  - Modifies internal state flags, likely `noteAlReadyInDataBase`.
-     *  - Potentially interacts with a database through `restartNoteAlreadyInDataBase()` and `checkIfNoteAlReadyInDataBase()`.
-     *  - Triggers updates via `updateTitle()` and `updateContent()`, which might have their own side effects.
-     *  - Title and content are updated even if no parameters are passed and onFirstLoad is set as false.
      */
     fun updateTitleAndContent(
         newTitle: String? = null,
@@ -151,25 +145,12 @@ class UpdateScreenViewModel @Inject constructor(
     }
 
     /**
-     * This function checks if a note with the current title, content, and date already exists in the database.
-     *
-     * It performs the check in the IO dispatcher to avoid blocking the main thread.
-     * If the note is found to already exist, it updates the `noteAlReadyInDataBase` flag to true and
-     * displays an error message to the user via the `mainEvents` callback.
-     *
-     * The note is considered to exist if a note with the exact same title, content, and date is
-     * found in the database.
-     *
-     * **Functionality Breakdown:**
-     * 1. **Launch in IO Dispatcher:**  Starts a coroutine within the `viewModelScope` using `Dispatchers.IO` to perform database operations off the main thread.
-     * 2. **Create NoteBO:** Creates a `NoteBO` (Business Object) instance representing the note to be checked, using the current values of `title`, `content`, and `dateModel.time`.
-     * 3. **Call isNoteAlReadyInDataBase:** Invokes the `isNoteAlReadyInDataBase` function (assumed to be a repository or data access layer function) to perform the database check. It passes the created `NoteBO` and a callback function.
-     * 4. **Callback Handling:** The callback function receives a `Boolean` result indicating whether the note already exists.
-     *    - **Update Flag:** It updates the `noteAlReadyInDataBase` variable with the received result.
-     *    - **Launch in Main Dispatcher:** If the note is found to exist (result is `true`), it launches another coroutine within `viewModelScope` using `Dispatchers.Main` to interact with the UI.
-     *    - **Show Error Message:**  It uses `mainEvents.takeIf { result }?.invoke(...)` to conditionally trigger an error message.
-     *       - `takeIf { result }` will only proceed if the result is `true` (note exists).
-     *       - `invoke(MainEvents.ShowMessage(UIMessagesVO.ERROR_NOTE_IN_DATABASE))` sends a `MainEvents.ShowMessage` event with a predefined error message (`UIMessagesVO.ERROR_NOTE_IN_DATABASE`) to the UI. This message is intended to notify */
+     * Check if the current note is in the dataBase in a IO coroutine
+     * if the current note is in the dataBase update [noteAlReadyInDataBase] state value to true
+     * and launch in main thread to show message by using [mainEvents]
+     * If the current note is not in the dataBase update [noteAlReadyInDataBase] state value to false
+     * and do not launch any message and do not change the thread
+     */
     private fun checkIfNoteAlReadyInDataBase() {
         viewModelScope.launch(Dispatchers.IO) {
             isNoteAlReadyInDataBase(
@@ -181,8 +162,10 @@ class UpdateScreenViewModel @Inject constructor(
             ) { result ->
                 noteAlReadyInDataBase = result
                 // launch main context to show message
-                viewModelScope.launch(Dispatchers.Main) {
-                    mainEvents.takeIf { result }?.invoke(MainEvents.ShowMessage(UIMessagesVO.ERROR_NOTE_IN_DATABASE))
+                viewModelScope.takeIf {
+                    result
+                }?.launch(Dispatchers.Main) {
+                    mainEvents(MainEvents.ShowMessage(UIMessagesVO.ERROR_NOTE_IN_DATABASE))
                 }
             }
         }

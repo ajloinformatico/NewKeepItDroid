@@ -47,13 +47,9 @@ fun AddScreen(
     isPreview: Boolean = false,
     mainEvents: (MainEvents) -> Unit = {}
 ) {
-    // needed values
-    /** TODO UPDATE WITH MAIN EVENTS
-    val noteSavedMessage = stringResource(R.string.note_saved)
+    // launch the viewModel
+    viewModel?.init(mainEvents)
 
-    if (viewModel?.noteAlReadyInDataBase == true) {
-        mainEvents(MainEvents.ShowMessage(stringResource(R.string.note_already_in_database)))
-    }*/
 
     // estructura / esqueleto
     Scaffold(
@@ -78,8 +74,6 @@ fun AddScreen(
                 IconButton(
                     onClick = {
                         viewModel?.insertNote()
-                        // TODO UPDATE WITH MAIN EVENTS
-                        // mainEvents(MainEvents.ShowMessage(noteSavedMessage))
                     },
                     enabled = viewModel?.buttonValidated == true
                 ) {
@@ -93,9 +87,14 @@ fun AddScreen(
     ) { paddingValues ->
         // Scaffold (esqueleto) nos devuelve siempre los paddings para ajustar al tamaño disponible y no al edge to edge
         // Arranca el contenido con una columna quew ocupa el ancho disponible menos paddinbgs de Scaffold
-        Column(modifier = Modifier.fillMaxWidth().padding(paddingValues)) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(paddingValues)) {
             // Otra columna con un margen de 16 dp y espacio entre elementos de 8 dp
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 // region bloqueCalendario
                 Text(
                     fontWeight = FontWeight.Bold,
@@ -110,20 +109,23 @@ fun AddScreen(
                             append(
                                 viewModel?.takeIf {
                                     !isPreview
-                                }?.dateModel?.month?.monthName ?: stringResource(R.string.month_name_preview)
+                                }?.dateModel?.month?.monthName
+                                    ?: stringResource(R.string.month_name_preview)
                             )
                         }
                         append(" ")
                         append(
                             viewModel?.takeIf {
                                 !isPreview
-                            }?.dateModel?.dayOfMonth ?: stringResource(R.string.day_of_month_preview)
+                            }?.dateModel?.dayOfMonth
+                                ?: stringResource(R.string.day_of_month_preview)
                         )
                     }
                 )
                 val yearAndDayTest: String = viewModel?.let {
                     "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
-                } ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
+                }
+                    ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
 
                 Text(text = yearAndDayTest)
                 // endregion bloqueCalendario
@@ -133,7 +135,9 @@ fun AddScreen(
 
             // region nota
             // La nota va en su propia columna para tener mas márgenes
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
                 // para incluir un campo de texto editable hemos de usar un TextField
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -154,7 +158,7 @@ fun AddScreen(
                     value = viewModel?.title.orEmpty(),
                     onValueChange = {
                         // when change we update viewmodel value
-                        viewModel?.updateTitle(it)
+                        viewModel?.updateTitleAndContent(newTitle = it)
                     },
                     placeholder = {
                         Text(
@@ -182,7 +186,7 @@ fun AddScreen(
                     ),
                     value = viewModel?.content.orEmpty(),
                     onValueChange = {
-                        viewModel?.updateContent(it)
+                        viewModel?.updateTitleAndContent(newContent = it)
                     },
                     placeholder = {
                         Text(
