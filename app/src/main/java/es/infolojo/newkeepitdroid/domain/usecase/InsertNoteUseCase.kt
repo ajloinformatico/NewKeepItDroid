@@ -16,8 +16,8 @@ import es.infolojo.newkeepitdroid.domain.repository.LocalRepository
  */
 class InsertNoteUseCase(
     private val repository: LocalRepository
-): suspend ((NoteBO) -> Unit) {
-    override suspend fun invoke(note: NoteBO) {
-        repository.insertNote(note.toDBO())
+): suspend ((NoteBO) -> Long) {
+    override suspend fun invoke(note: NoteBO): Long {
+        return repository.insertNote(note.toDBO())
     }
 }

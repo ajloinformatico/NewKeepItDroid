@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LocalRepository {
     @Insert
-    fun insertNote(note: NoteDBO)
+    fun insertNote(note: NoteDBO): Long
 
     @Query("SELECT * FROM notedbo order by date desc")
     fun getNotesByDateDesc(): Flow<List<NoteDBO>>
@@ -26,7 +26,7 @@ interface LocalRepository {
     fun getNotesBtTitleAscend(): Flow<List<NoteDBO>>
 
     @Query("SELECT * FROM notedbo WHERE id = :id")
-    fun getNoteById(id: Int): NoteDBO?
+    fun getNoteById(id: Long): NoteDBO?
 
     @Query("SELECT * FROM notedbo WHERE title LIKE '%' || :title || '%'")
     fun getNotesByTitleQuery(title: String): Flow<List<NoteDBO>>

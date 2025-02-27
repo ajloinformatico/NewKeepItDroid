@@ -7,8 +7,8 @@ import javax.inject.Inject
 class LocalRepositoryImpl @Inject constructor(
     private val notesDao: LocalRepository
 ): LocalRepository {
-    override fun insertNote(note: NoteDBO) {
-        notesDao.insertNote(note)
+    override fun insertNote(note: NoteDBO): Long {
+        return notesDao.insertNote(note)
     }
 
     override fun getNotesByDateDesc(): Flow<List<NoteDBO>> = notesDao.getNotesByDateDesc()
@@ -19,7 +19,7 @@ class LocalRepositoryImpl @Inject constructor(
 
     override fun getNotesBtTitleAscend(): Flow<List<NoteDBO>> = notesDao.getNotesBtTitleAscend()
 
-    override fun getNoteById(id: Int): NoteDBO? = notesDao.getNoteById(id)
+    override fun getNoteById(id: Long): NoteDBO? = notesDao.getNoteById(id)
 
     override fun getNotesByTitleQuery(title: String): Flow<List<NoteDBO>> = notesDao.getNotesByTitleQuery(title)
 
