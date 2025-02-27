@@ -1,4 +1,4 @@
-package es.infolojo.newkeepitdroid
+package es.infolojo.newkeepitdroid.ui.activities.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
+import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.add.AddScreen
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.ui.theme.NewKeepItDroidTheme
 import es.infolojo.newkeepitdroid.utils.ToastMaker
-
-sealed interface MainEvents {
-    data class ShowMessage(val message: UIMessagesVO) : MainEvents
-}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

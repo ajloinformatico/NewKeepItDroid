@@ -35,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 
 private const val CLASS_NAME = "AddScreen"
 
