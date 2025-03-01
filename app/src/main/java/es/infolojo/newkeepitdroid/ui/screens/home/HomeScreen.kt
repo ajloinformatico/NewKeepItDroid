@@ -173,14 +173,15 @@ fun HomeScreen(
 
             // Dialog alert to remove a note
             AnimatedVisibility(visible = viewModel?.showAlertToRemove?.value == true) {
+                val noteTitle = viewModel?.noteToRemove?.title.orEmpty()
                 AlertDialog(
                     text = {
-                        val text = (viewModel?.noteToRemove?.title ?: "") + " " + stringResource(R.string.will_be_removed)
+                        val text = "$noteTitle ${stringResource(R.string.will_be_removed)}"
                         Text(text = text)
                     },
                     title = {
                         Text(
-                            text = stringResource(R.string.shure_to_remove),
+                            text = "${stringResource(R.string.shure_to_remove)} $noteTitle ?",
                             fontWeight = FontWeight.Bold
                         )
                     },

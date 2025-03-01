@@ -1,6 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
@@ -50,9 +50,7 @@ class HomeScreenViewModel @Inject constructor(
         this.mainEvents = mainEvents
         this.navController = navController
         viewModelScope.launch(Dispatchers.IO) {
-            getNotesUseCase(SortOrder.DateDescend).collect {
-                _notes.value = it.toVO()
-            }
+            getNotes()
         }
     }
 
@@ -85,20 +83,28 @@ class HomeScreenViewModel @Inject constructor(
     fun removeSelectedNote() {
         viewModelScope.launch(Dispatchers.IO) {
             noteToRemove?.let {
-                val noteToRemoveCopy = it
-                noteToRemove = null
-                deleteNoteUseCase(noteToRemoveCopy.toBO())
-            }
+                val noteToRemoveCopy = it.copy().toBO()
+                restartRemoveStates()
+                deleteNoteUseCase(noteToRemoveCopy)
+                getNotes()
+            } ?: restartRemoveStates()
         }
-        restartRemoveStates()
     }
 
     /**
      * restart remove states
      */
     fun restartRemoveStates() {
-        noteToRemove = null
         showAlertToRemove.value = false
+        noteToRemove = null
     }
     // endregion public methods
+
+    // region private methods
+    private suspend fun getNotes() {
+        getNotesUseCase(SortOrder.DateDescend).collect {
+            _notes.value = it.toVO()
+        }
+    }
+    // endregion private methods
 }

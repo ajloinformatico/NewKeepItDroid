@@ -89,6 +89,7 @@ class AddScreenViewModel @Inject constructor(
             if (noteAdded) {
                 updateNoteUseCase(newNote)
                 viewModelScope.launch(Dispatchers.Main) {
+                    mainEvents(MainEvents.HideKeyBoard)
                     mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATA_BASE_UPDATED))
                 }
             } else {
@@ -97,6 +98,7 @@ class AddScreenViewModel @Inject constructor(
                 noteAddedId = newNoteAddedId
                 noteAlReadyInDataBase = false
                 viewModelScope.launch(Dispatchers.Main) {
+                    mainEvents(MainEvents.HideKeyBoard)
                     mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATABASE_NOTE_ADDED))
                 }
             }

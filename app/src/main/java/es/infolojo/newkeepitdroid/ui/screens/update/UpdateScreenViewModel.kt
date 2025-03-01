@@ -120,8 +120,9 @@ class UpdateScreenViewModel @Inject constructor(
             // after the update we have to change the status to block the update
             originalNote = newNote
             noteAlReadyInDataBase = true
-            // launch main context to show message
+            // launch main context to show message and hide keyboard
             viewModelScope.launch(Dispatchers.Main) {
+                mainEvents(MainEvents.HideKeyBoard)
                 mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATA_BASE_UPDATED))
             }
         }
