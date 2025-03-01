@@ -4,4 +4,5 @@ import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 
 sealed interface MainEvents {
     data class ShowMessage(val message: UIMessagesVO) : MainEvents
+    data class CustomMessage(val message: String) : MainEvents
 }

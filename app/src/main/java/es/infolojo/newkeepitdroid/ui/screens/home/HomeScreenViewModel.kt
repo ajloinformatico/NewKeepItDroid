@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
-import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.domain.usecase.DeleteNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.SortOrder
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toBO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toVO

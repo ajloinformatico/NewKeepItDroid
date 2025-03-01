@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import es.infolojo.newkeepitdroid.MainEvents
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.add.AddScreen
 import es.infolojo.newkeepitdroid.ui.screens.home.HomeScreen
 import es.infolojo.newkeepitdroid.ui.screens.search.SearchScreen

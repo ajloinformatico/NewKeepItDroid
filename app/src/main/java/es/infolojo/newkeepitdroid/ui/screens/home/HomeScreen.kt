@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.utils.getSize
 
 private const val PREVIEW_NOTES_SIZE = 8
