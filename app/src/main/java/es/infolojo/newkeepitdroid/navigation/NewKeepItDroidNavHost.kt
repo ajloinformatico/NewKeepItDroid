@@ -36,7 +36,7 @@ fun NewKeepItDroidNavHost(
         composable(
             route = ScreensRoutes.Update.routeWithArgument,
             arguments = listOf(navArgument(ScreensRoutes.Update.argumentName) {
-                type = NavType.IntType
+                type = NavType.LongType
             })
         ) { navBackStackEntry ->
             val noteId =

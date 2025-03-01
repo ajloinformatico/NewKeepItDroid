@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,12 +32,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 import es.infolojo.newkeepitdroid.utils.getFormattedDate
+
+private const val MAX_LENGTH_CONTENT = 40
 
 /**
  * Row of the home screen
@@ -49,6 +53,9 @@ fun ItemNote(
 
     var expanded by rememberSaveable { mutableStateOf(true) }
     var dropMenuExpanded by rememberSaveable { mutableStateOf(false) }
+
+    // at the first load modify the expanded state
+    expanded = noteVO?.content.orEmpty().length < MAX_LENGTH_CONTENT
 
     Column(
         modifier = Modifier
@@ -93,29 +100,36 @@ fun ItemNote(
                 )
             }
 
-            // Row to align content to right because the previous composable has 1f as weight
-            DropdownMenu(
-                expanded = dropMenuExpanded,
-                onDismissRequest = { dropMenuExpanded = false },
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
             ) {
-                DropdownMenuItem(
-                    text = { Text(text = stringResource(R.string.delete_note)) },
-                    onClick = {
-                        noteVO?.id?.let { noteId ->
-                            Log.d("TonyTest", "onClick delete")
-                            events(HomeScreenGridEvents.Delete(id = noteId, noteVO = noteVO))
+                DropdownMenu(
+                    expanded = dropMenuExpanded,
+                    onDismissRequest = { dropMenuExpanded = false },
+                    offset = DpOffset(0.dp, 22.dp)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.delete_note)) },
+                        onClick = {
+                            noteVO?.id?.let { noteId ->
+                                Log.d("TonyTest", "onClick delete")
+                                events(HomeScreenGridEvents.Delete(id = noteId, noteVO = noteVO))
+                            }
+                            dropMenuExpanded = false
                         }
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text(text = stringResource(R.string.edit_note)) },
-                    onClick = {
-                        noteVO?.id?.let { noteId ->
-                            Log.d("TonyTest", "onClick update")
-                            events(HomeScreenGridEvents.Update(noteId))
+                    )
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.edit_note)) },
+                        onClick = {
+                            noteVO?.id?.let { noteId ->
+                                Log.d("TonyTest", "onClick update")
+                                events(HomeScreenGridEvents.Update(noteId))
+                            }
+                            dropMenuExpanded = false
                         }
-                    }
-                )
+                    )
+                }
             }
         }
         // endregion header
@@ -165,7 +179,6 @@ fun ItemNote(
                 contentDescription = stringResource(R.string.expand_and_collapse)
             )
         }
-
         // endregion body
     }
 }
