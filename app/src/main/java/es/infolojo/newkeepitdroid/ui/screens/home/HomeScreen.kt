@@ -69,7 +69,9 @@ fun HomeScreen(
 
                 // aquí se incluye la parte de los iconos
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        viewModel?.openSearchScreen()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search_your_note)

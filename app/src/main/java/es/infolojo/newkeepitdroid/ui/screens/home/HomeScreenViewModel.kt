@@ -77,6 +77,11 @@ class HomeScreenViewModel @Inject constructor(
         navController?.navigate(ScreensRoutes.Add.route)
     }
 
+
+    fun openSearchScreen() {
+        navController?.navigate(ScreensRoutes.Search.route)
+    }
+
     /**
      * remove selected note and restart remove states
      */
