@@ -1,7 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
+import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.utils.getSize
 
 private const val PREVIEW_NOTES_SIZE = 8
@@ -174,42 +172,17 @@ fun HomeScreen(
             }
 
             // Dialog alert to remove a note
-            AnimatedVisibility(visible = viewModel?.showAlertToRemove?.value == true) {
-                val noteTitle = viewModel?.noteToRemove?.title.orEmpty()
-                AlertDialog(
-                    text = {
-                        val text = "$noteTitle ${stringResource(R.string.will_be_removed)}"
-                        Text(text = text)
-                    },
-                    title = {
-                        Text(
-                            text = "${stringResource(R.string.shure_to_remove)} $noteTitle ?",
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    onDismissRequest = {
-                        viewModel?.restartRemoveStates()
-                    },
-                    confirmButton = {
-                        Text(
-                            text = stringResource(R.string.yes),
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier.clickable(enabled = true) {
-                                viewModel?.removeSelectedNote()
-                            }
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            text = stringResource(R.string.no),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable {
-                                viewModel?.restartRemoveStates()
-                            }
-                        )
-                    }
-                )
-            }
+            RegularAlertDialogComponent(
+                title = "${viewModel?.noteToRemove?.title.orEmpty()} ${stringResource(R.string.will_be_removed)}",
+                text = "${stringResource(R.string.shure_to_remove)} ${viewModel?.noteToRemove?.title.orEmpty()} ?",
+                onConfirm = {
+                    viewModel?.removeSelectedNote()
+                },
+                onDismiss = {
+                    viewModel?.restartRemoveStates()
+                },
+                enabled = viewModel?.showAlertToRemove?.value == true
+            )
         }
     }
 }

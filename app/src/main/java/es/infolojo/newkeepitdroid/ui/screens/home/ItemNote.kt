@@ -51,11 +51,9 @@ fun ItemNote(
     events: ((HomeScreenGridEvents) -> Unit) = {}
 ) {
 
-    var expanded by rememberSaveable { mutableStateOf(true) }
+    // At the first load check if note content is longer than MAX_LENGTH_CONTENT
+    var expanded by rememberSaveable { mutableStateOf((noteVO?.content?.length ?: 0) < MAX_LENGTH_CONTENT) }
     var dropMenuExpanded by rememberSaveable { mutableStateOf(false) }
-
-    // at the first load modify the expanded state
-    expanded = noteVO?.content.orEmpty().length < MAX_LENGTH_CONTENT
 
     Column(
         modifier = Modifier

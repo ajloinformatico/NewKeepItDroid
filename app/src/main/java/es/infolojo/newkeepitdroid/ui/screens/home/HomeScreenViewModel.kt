@@ -1,7 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
