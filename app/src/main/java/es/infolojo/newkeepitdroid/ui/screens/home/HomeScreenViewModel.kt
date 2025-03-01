@@ -1,5 +1,7 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +15,7 @@ import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toBO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toVO
+import es.infolojo.newkeepitdroid.utils.launchPostDelayed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -86,13 +89,13 @@ class HomeScreenViewModel @Inject constructor(
      * remove selected note and restart remove states
      */
     fun removeSelectedNote() {
+        val noteToRemoveCopy = noteToRemove?.copy()?.toBO()
+        restartRemoveStates()
         viewModelScope.launch(Dispatchers.IO) {
-            noteToRemove?.let {
-                val noteToRemoveCopy = it.copy().toBO()
-                restartRemoveStates()
-                deleteNoteUseCase(noteToRemoveCopy)
-                getNotes()
-            } ?: restartRemoveStates()
+            noteToRemoveCopy?.let {
+                deleteNoteUseCase(it)
+            }
+            getNotes()
         }
     }
 
@@ -101,7 +104,9 @@ class HomeScreenViewModel @Inject constructor(
      */
     fun restartRemoveStates() {
         showAlertToRemove.value = false
-        noteToRemove = null
+        launchPostDelayed {
+            noteToRemove = null
+        }
     }
     // endregion public methods
 
