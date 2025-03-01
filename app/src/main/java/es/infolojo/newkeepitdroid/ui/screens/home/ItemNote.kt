@@ -1,8 +1,10 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,33 +32,53 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
+import es.infolojo.newkeepitdroid.utils.getFormattedDate
+
+private const val MAX_LENGTH_CONTENT = 40
 
 /**
  * Row of the home screen
  */
 @Composable
-fun ItemNote() {
+fun ItemNote(
+    noteVO: NoteVO? = null,
+    events: ((HomeScreenGridEvents) -> Unit) = {}
+) {
 
-    var expanded by rememberSaveable { mutableStateOf(true) }
+    // At the first load check if note content is longer than MAX_LENGTH_CONTENT
+    var expanded by rememberSaveable { mutableStateOf((noteVO?.content?.length ?: 0) < MAX_LENGTH_CONTENT) }
     var dropMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                noteVO?.id?.let { noteId ->
+                    Log.d("TonyTest", "onClick")
+                    events(HomeScreenGridEvents.Update(noteId))
+                }
+            }
     ) {
-        // region cabecera
+        // region header
         Row(
-            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondary),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.secondary),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Título de la nota
+            // NoteTitle
             Text(
-                text = stringResource(R.string.title),
-                // mayor peso para que ocupe mas espacio
-                modifier = Modifier.weight(1f).padding(start = 8.dp),
+                text = noteVO?.title ?: stringResource(R.string.title),
+                // More weight "1f" to take up more space
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 overflow = TextOverflow.Ellipsis, // idem a elipsis end en xml
@@ -65,54 +87,73 @@ fun ItemNote() {
                 style = TextStyle(lineHeight = 1.5.em)
             )
 
-            // Menú de opciones
+            // MainOptions
             IconButton(
                 onClick = { dropMenuExpanded = !dropMenuExpanded }
             ) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options),
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = stringResource(R.string.more_options),
                     tint = MaterialTheme.colorScheme.background
                 )
             }
 
-            // Row para alinear el contenido a la derecha
-            DropdownMenu(
-                expanded = dropMenuExpanded,
-                onDismissRequest = { dropMenuExpanded = false },
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(R.string.delete_note))
-                    },
-                    onClick = { /*TODO*/ }
-                )
-                DropdownMenuItem(
-                    text = {
-                        Text(text = stringResource(R.string.edit_note))
-                    },
-                    onClick = { /*TODO*/ }
-                )
+                DropdownMenu(
+                    expanded = dropMenuExpanded,
+                    onDismissRequest = { dropMenuExpanded = false },
+                    offset = DpOffset(0.dp, 22.dp)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.delete_note)) },
+                        onClick = {
+                            noteVO?.id?.let { noteId ->
+                                Log.d("TonyTest", "onClick delete")
+                                events(HomeScreenGridEvents.Delete(id = noteId, noteVO = noteVO))
+                            }
+                            dropMenuExpanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.edit_note)) },
+                        onClick = {
+                            noteVO?.id?.let { noteId ->
+                                Log.d("TonyTest", "onClick update")
+                                events(HomeScreenGridEvents.Update(noteId))
+                            }
+                            dropMenuExpanded = false
+                        }
+                    )
+                }
             }
         }
-        // endregion cabecera
+        // endregion header
 
-        // region cuerpo
-        // contenido de la nota
+        // region body
+        // note content
         AnimatedVisibility(visible = expanded) {
             Row(
-                modifier = Modifier.padding(start = 8.dp, end = 16.dp, bottom = 8.dp, top = 8.dp).align(Alignment.Start).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 16.dp, bottom = 8.dp, top = 8.dp)
+                    .align(Alignment.Start)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
-                    text = stringResource(R.string.note_content),
-                    modifier = Modifier.weight(1f).padding(end = 24.dp),
+                    text = noteVO?.content ?: stringResource(R.string.note_content),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 24.dp),
                     color = Color.Gray,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp,
                     style = TextStyle(lineHeight = 1.5.em)
                 )
                 Text(
-                    text = stringResource(R.string.note_date),
+                    text = noteVO?.date?.getFormattedDate() ?: stringResource(R.string.note_date),
                     color = Color.Gray,
                     fontSize = 12.sp,
                     style = TextStyle(lineHeight = 0.em),
@@ -136,8 +177,7 @@ fun ItemNote() {
                 contentDescription = stringResource(R.string.expand_and_collapse)
             )
         }
-
-        // endregion cuerpo
+        // endregion body
     }
 }
 

@@ -30,5 +30,11 @@
     <string name="note_updated">Note has been updated</string>
     <string name="note_saved">Note has been saved</string>
     <string name="note_already_in_database">The note is already in database</string>"
-    <string name="ok">OK</string>"
+    <string name="ok">OK</string>
+    <string name="shure_to_remove">Are you sure you want to remove</string>
+    <string name="note">note</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="will_be_removed">Will be removed</string>
 </resources>
