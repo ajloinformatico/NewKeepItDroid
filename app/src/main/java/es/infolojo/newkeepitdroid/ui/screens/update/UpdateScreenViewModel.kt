@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.domain.data.bo.NoteBO
 import es.infolojo.newkeepitdroid.domain.data.common.DateModel
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
 import es.infolojo.newkeepitdroid.domain.usecase.SortOrder
 import es.infolojo.newkeepitdroid.domain.usecase.UpdateNoteUseCase
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.utils.validateContent
 import es.infolojo.newkeepitdroid.utils.validateTitle

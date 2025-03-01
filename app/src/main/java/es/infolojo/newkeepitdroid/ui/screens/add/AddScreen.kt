@@ -35,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import es.infolojo.newkeepitdroid.MainEvents
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 
 private const val CLASS_NAME = "AddScreen"
 
@@ -50,15 +50,15 @@ fun AddScreen(
     // launch the viewModel
     viewModel?.init(mainEvents)
 
-
-    // estructura / esqueleto
+    // Scaffold -> common structure for normal screen
     Scaffold(
-        // dentro monta su topbar
+        // Inside it we can add a regular topBar that we will use to include back and save buttons
         modifier = modifier.fillMaxWidth(),
         topBar = {
-            // fila que ocupa el contenido completo de la pantalla
+            // Row that fills all the screen content
             Row {
-                // Icono pata volver atrás
+                // IconButton can be used as a clickable element with the icon as a composable param
+                // that will include the real icon inside. In this case we use it to save.
                 IconButton(
                     onClick = { Log.d(CLASS_NAME, "Back button clicked") }
                 ) {
@@ -68,9 +68,11 @@ fun AddScreen(
                     )
                 }
 
-                // Espacio entre iconos con peso 1 para que ocupe el espacio disponible
+                // Space between first and second Icons. with weight 1 we will take all the space
+                // and have the icons at the ends of the screens.
                 Spacer(modifier = Modifier.weight(1f))
-                // Icono de guardar
+
+                // Same of the previous IconButton. But in this case it is to save
                 IconButton(
                     onClick = {
                         viewModel?.insertNote()
@@ -85,21 +87,22 @@ fun AddScreen(
             }
         }
     ) { paddingValues ->
-        // Scaffold (esqueleto) nos devuelve siempre los paddings para ajustar al tamaño disponible y no al edge to edge
-        // Arranca el contenido con una columna quew ocupa el ancho disponible menos paddinbgs de Scaffold
+        // Scaffold (structure) returns always the paddings to adjust to the screen size and not to the edge to edge
+        // Inside this real content we will use a column that occupies the full width of the screen
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(paddingValues)) {
-            // Otra columna con un margen de 16 dp y espacio entre elementos de 8 dp
+
+            // inside it this is another column with a margin of 16 dp and space between elements of 8dp
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // region bloqueCalendario
+                // region calendar (here we will group all the calendar info (mouth, day of the mouth, year and day of the week))
                 Text(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    // todate text color with buildAnnotatedString
+                    // for the date we will use buildAnnotatedString that gives more intense control for test
                     text = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
@@ -109,36 +112,36 @@ fun AddScreen(
                             append(
                                 viewModel?.takeIf {
                                     !isPreview
-                                }?.dateModel?.month?.monthName
-                                    ?: stringResource(R.string.month_name_preview)
+                                }?.dateModel?.month?.monthName ?: stringResource(R.string.month_name_preview)
                             )
                         }
                         append(" ")
                         append(
                             viewModel?.takeIf {
                                 !isPreview
-                            }?.dateModel?.dayOfMonth
-                                ?: stringResource(R.string.day_of_month_preview)
+                            }?.dateModel?.dayOfMonth ?: stringResource(R.string.day_of_month_preview)
                         )
                     }
                 )
+
+                // for year and day with a simple text is enough.
                 val yearAndDayTest: String = viewModel?.let {
                     "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
-                }
-                    ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
+                } ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
 
                 Text(text = yearAndDayTest)
-                // endregion bloqueCalendario
+                // endregion calendar
             }
 
+            // Line with horizontal to
             HorizontalDivider(modifier = Modifier.height(2.dp))
 
             // region nota
-            // La nota va en su propia columna para tener mas márgenes
+            // Notes goes with his own column to group the content with more margins
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)) {
-                // para incluir un campo de texto editable hemos de usar un TextField
+                // To include a editable text field we will use a TextField
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
