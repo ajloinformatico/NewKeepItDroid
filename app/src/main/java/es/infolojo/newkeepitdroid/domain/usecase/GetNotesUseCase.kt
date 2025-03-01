@@ -12,7 +12,7 @@ sealed interface SortOrder {
     data object DateAscend : SortOrder
     data object TitleDescend : SortOrder
     data object TitleAscend : SortOrder
-    data class ById(val id: Int) : SortOrder
+    data class ById(val id: Long) : SortOrder
     data class ByTitle(val title: String) : SortOrder
     data class ByContent(val content: String) : SortOrder
 }
@@ -35,8 +35,15 @@ class GetNotesUseCase(
 ) : suspend ((SortOrder) -> Flow<List<NoteBO>>) {
     override suspend fun invoke(sorterOrder: SortOrder): Flow<List<NoteBO>> = when (sorterOrder) {
         is SortOrder.DateDescend -> repository.getNotesByDateDesc().map { it.toBO() }
-        is SortOrder.ByContent -> repository.getNotesByContentQuery(sorterOrder.content).map { it.toBO() }
-        is SortOrder.ById -> flow { emit(repository.getNoteById(sorterOrder.id)?.toBO()?.let(::listOf) ?: emptyList()) }
+        is SortOrder.ByContent -> repository.getNotesByContentQuery(sorterOrder.content)
+            .map { it.toBO() }
+
+        is SortOrder.ById -> flow {
+            emit(
+                repository.getNoteById(sorterOrder.id)?.toBO()?.let(::listOf) ?: emptyList()
+            )
+        }
+
         is SortOrder.ByTitle -> repository.getNotesByTitleQuery(sorterOrder.title).map { it.toBO() }
         is SortOrder.DateAscend -> repository.getNotesByDateAscend().map { it.toBO() }
         is SortOrder.TitleAscend -> repository.getNotesBtTitleAscend().map { it.toBO() }

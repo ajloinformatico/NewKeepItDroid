@@ -1,6 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.update
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,22 +33,31 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
-
-private const val CLASS_NAME = "AddScreen"
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 
 @Composable
-fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
-    // estructura / esqueleto
+fun UpdateScreen(
+    modifier: Modifier = Modifier,
+    isPreview: Boolean = false,
+    viewModel: UpdateScreenViewModel? = hiltViewModel(),
+    mainEvents: (MainEvents) -> Unit = {},
+    noteId: Long
+) {
+    // launch the viewModel
+    viewModel?.init(noteId, mainEvents)
+
+    // Scaffold -> common structure for normal screen
     Scaffold(
         modifier = modifier.fillMaxWidth(),
-        // dentro monta su topbar
+        // Inside it we can add a regular topBar that we will use to include back and save buttons
         topBar = {
-            // fila que ocupa el tamaño completo de la pantalla
+            // IconButton can be used as a clickable element with the icon as a composable param
+            // that will include the real icon inside. In this case we use it to save.
             Row {
-                // Icono pata volver atrás
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "Back button clicked") }
+                    onClick = { }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -57,11 +65,16 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                     )
                 }
 
-                // Espacio entre iconos con peso 1 para que ocupe el espacio disponible
+                // Space between first and second Icons. with weight 1 we will take all the space
+                // and have the icons at the ends of the screens.
                 Spacer(modifier = Modifier.weight(1f))
-                // Icono de guardar
+
+                // Same of the previous IconButton. But in this case it is to update
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "save button clicked") }
+                    onClick = {
+                        viewModel?.updateNote()
+                    },
+                    enabled = viewModel?.updatedValidated == true
                 ) {
                     Icon(
                         painterResource(R.drawable.baseline_update_24),
@@ -71,38 +84,58 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
             }
         }
     ) { paddingValues ->
-        // Scaffold (esqueleto) nos devuelve siempre los paddings para ajustar al tamaño disponible y no al edge to edge
-        // Arranca el contenido con una columna quew ocupa el ancho disponible menos paddinbgs de Scaffold
-        Column(modifier = Modifier.fillMaxWidth().padding(paddingValues)) {
-            // Otra columna con un margen de 16 dp y espacio entre elementos de 8 dp
+        // Scaffold (structure) returns always the paddings to adjust to the screen size and not to the edge to edge
+        // Inside this real content we will use a column that occupies the full width of the screen
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
+        ) {
+
+            // Inside it this is another column with a margin of 16 dp and space between elements of 8dp
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                // region bloqueCalendario
+                // region calendar (here we will group all the calendar info (mouth, day of the mouth, year and day of the week))
                 Text(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    // todate text color with buildAnnotatedString
+                    // for the date we will use buildAnnotatedString that gives more intense control for test
                     text = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         ) {
-                            append("MARCH")
+                            append(
+                                viewModel?.takeIf {
+                                    !isPreview
+                                }?.dateModel?.month?.monthName ?: stringResource(R.string.month_name_preview)
+                            )
                         }
                         append(" ")
-                        append("25")
+                        append(
+                            viewModel?.takeIf {
+                                !isPreview
+                            }?.dateModel?.dayOfMonth ?: stringResource(R.string.day_of_month_preview)
+                        )
                     }
                 )
-                Text(text = "2025 WEDNESDAY")
-                // endregion bloqueCalendario
+
+                // for year and day with a simple text is enough.
+                val yearAndDayTest: String = viewModel?.takeIf { !isPreview }?.let {
+                    "${it.dateModel.currentYear} ${it.dateModel.dayOfWeek.dayName}"
+                } ?: "${stringResource(R.string.year_preview)} ${stringResource(R.string.day_of_week_preview)}"
+
+                Text(text = yearAndDayTest)
+                // endregion calendar
             }
 
+            // Line with horizontal to
             HorizontalDivider(modifier = Modifier.height(2.dp))
 
             // region nota
-            // La nota va en su propia columna para tener mas márgenes
+            // Notes goes with his own column to group the content with more margins
             Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                // para incluir un campo de texto editable hemos de usar un TextField
+                // To include a editable text field we will use a TextField
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
@@ -119,8 +152,10 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.title.orEmpty(),
+                    onValueChange = {
+                        viewModel?.updateTitleAndContent(newTitle = it)
+                    },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.title_placeholder),
@@ -144,8 +179,8 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
                         imeAction = ImeAction.Next,
                         capitalization = KeyboardCapitalization.Sentences
                     ),
-                    value = "",
-                    onValueChange = { /* TODO */ },
+                    value = viewModel?.content.orEmpty(),
+                    onValueChange = { viewModel?.updateTitleAndContent(newContent = it) },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.content_placeholder),
@@ -163,5 +198,5 @@ fun UpdateScreen(modifier: Modifier = Modifier, isPreview: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 fun UpdateScreenPreview() {
-    UpdateScreen(isPreview = true)
+    UpdateScreen(isPreview = true, viewModel = null, noteId = 0)
 }
