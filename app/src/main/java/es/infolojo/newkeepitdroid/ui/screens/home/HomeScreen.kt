@@ -77,34 +77,40 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // DropDown component
-                    IconButton(onClick = { /*TODO*/ }) {
+                    // DropDown component (when click update dropMenuExpanded state)
+                    IconButton(onClick = { viewModel?.clickInDropMenuIcon() }) {
                         Icon(
                             painterResource(R.drawable.baseline_filter_list_24),
                             contentDescription = stringResource(R.string.filter_by)
                         )
                     }
                     DropdownMenu(
-                        expanded = false,
-                        onDismissRequest = { /*TODO*/ }
+                        expanded = viewModel?.dropMenuExpanded?.value == true,
+                        onDismissRequest = { viewModel?.restartDropMenuExpanded() }
                     ) {
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.creation_date_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByDate()
+                            }
                         )
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.ascend_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByTitleAscend()
+                            }
                         )
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.descend_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByTitleDescend()
+                            }
                         )
                     }
                 }

@@ -3,8 +3,8 @@
     <string name="back_arrow">Back to the previous screen</string>
     <string name="save_icon">Save</string>
     <string name="my_notes">My Notes</string>
-    <string name="ascend_filter">Filter by ascending order</string>
-    <string name="descend_filter">Filter by descending order</string>
+    <string name="ascend_filter">Filter by title ascending order</string>
+    <string name="descend_filter">Filter by title descending order</string>
     <string name="add_note">Add note</string>
     <string name="creation_date_filter">Filter by creation date</string>"
     <string name="search_your_note">Search your note</string>

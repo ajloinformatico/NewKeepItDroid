@@ -32,6 +32,7 @@ class HomeScreenViewModel @Inject constructor(
     // states
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
+    var dropMenuExpanded = mutableStateOf(false)
 
     // needed for remove
     val showAlertToRemove = mutableStateOf(false)
@@ -46,13 +47,17 @@ class HomeScreenViewModel @Inject constructor(
     // endregion attr
 
     // region public methods
-    fun init(mainEvents: ((MainEvents) -> Unit), navController: NavHostController?) {
+    init {
         restartRemoveStates()
-        this.mainEvents = mainEvents
-        this.navController = navController
+        restartDropMenuExpanded()
         viewModelScope.launch(Dispatchers.IO) {
             getNotes()
         }
+    }
+
+    fun init(mainEvents: ((MainEvents) -> Unit), navController: NavHostController?) {
+        this.mainEvents = mainEvents
+        this.navController = navController
     }
 
     /**
@@ -68,6 +73,50 @@ class HomeScreenViewModel @Inject constructor(
             is HomeScreenGridEvents.Update -> {
                 navController?.navigate(ScreensRoutes.Update.createRoute(events.id))
             }
+        }
+    }
+
+    /**
+     * Click in dropMenuIcon
+     */
+    fun clickInDropMenuIcon() {
+        dropMenuExpanded.value = !dropMenuExpanded.value
+    }
+
+    /**
+     * Restart the [dropMenuExpanded] state]
+     */
+    fun restartDropMenuExpanded() {
+        dropMenuExpanded.value = false
+    }
+
+    /**
+     * Filter by noteDate
+     */
+    fun filterByDate() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getNotes()
+            restartDropMenuExpanded()
+        }
+    }
+
+    /**
+     * Filter by noteTitleAscend
+     */
+    fun filterByTitleAscend() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getNotes(SortOrder.TitleAscend)
+            restartDropMenuExpanded()
+        }
+    }
+
+    /**
+     * Filter by noteTitleDescend
+     */
+    fun filterByTitleDescend() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getNotes(SortOrder.TitleDescend)
+            restartDropMenuExpanded()
         }
     }
 
@@ -109,8 +158,8 @@ class HomeScreenViewModel @Inject constructor(
     // endregion public methods
 
     // region private methods
-    private suspend fun getNotes() {
-        getNotesUseCase(SortOrder.DateDescend).collect {
+    private suspend fun getNotes(sorterOrder: SortOrder = SortOrder.DateDescend) {
+        getNotesUseCase(sorterOrder).collect {
             _notes.value = it.toVO()
         }
     }
