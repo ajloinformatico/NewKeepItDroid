@@ -33,6 +33,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
     var dropMenuExpanded = mutableStateOf(false)
+    var numberOfColumns = mutableStateOf(1)
 
     // needed for remove
     val showAlertToRemove = mutableStateOf(false)
@@ -127,9 +128,22 @@ class HomeScreenViewModel @Inject constructor(
         navController?.navigate(ScreensRoutes.Add.route)
     }
 
-
+    /**
+     * Navigate to search screen
+     */
     fun openSearchScreen() {
         navController?.navigate(ScreensRoutes.Search.route)
+    }
+
+    /**
+     * Number of columns
+     */
+    fun changeNumberOfColumns() {
+        numberOfColumns.value = if (numberOfColumns.value == 1) {
+            2
+        } else {
+            1
+        }
     }
 
     /**

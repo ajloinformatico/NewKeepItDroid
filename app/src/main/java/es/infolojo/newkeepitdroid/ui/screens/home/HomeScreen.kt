@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,6 +56,9 @@ fun HomeScreen(
 
     // observe notes states
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
+    // needed to manage number of columns. In the other way with simple lazy list is ok
+    val lazyListState = rememberLazyStaggeredGridState()
+
     Scaffold(
         topBar = {
             // appBar preparada para incluir títulos he iconos
@@ -73,6 +79,16 @@ fun HomeScreen(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search_your_note)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(onClick = {
+                        viewModel?.changeNumberOfColumns()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = stringResource(R.string.update_number_of_columns)
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
@@ -140,6 +156,49 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(viewModel?.numberOfColumns?.value ?: 1),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 8.dp,
+                        top = 8.dp
+                    ),
+                state = lazyListState,
+                horizontalArrangement = if ((viewModel?.numberOfColumns?.value ?: 1) == 1) {
+                    Arrangement.Center
+                } else {
+                    Arrangement.spacedBy(8.dp)
+                },
+                verticalItemSpacing = 8.dp,
+                content = {
+
+                    items(
+                        if (isPreview) {
+                            PREVIEW_NOTES_SIZE
+                        } else {
+                            notes?.value.getSize()
+                        }
+                    ) {
+                        if (isPreview) ItemNote() else {
+                            notes?.value?.getOrNull(it)?.let { noteVO ->
+                                ItemNote(
+                                    noteVO = noteVO,
+                                    events = viewModel::manageHomeScreenGridEvents
+                                )
+                            }
+                        }
+                    }
+                    // para hacer un clipToPadding false
+                    item {
+                        Box(modifier = Modifier.size(80.dp))
+                    }
+                }
+            )
+
+            /**
             // RecyclerView
             LazyColumn(
                 modifier = Modifier
@@ -176,6 +235,7 @@ fun HomeScreen(
                     Box(modifier = Modifier.size(80.dp))
                 }
             }
+            */
 
             // Dialog alert to remove a note
             RegularAlertDialogComponent(

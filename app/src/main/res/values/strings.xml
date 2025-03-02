@@ -37,4 +37,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="will_be_removed">Will be removed</string>
+    <string name="update_number_of_columns">Update number of columns</string>"
 </resources>
