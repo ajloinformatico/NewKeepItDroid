@@ -1,5 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,7 +34,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
     var dropMenuExpanded = mutableStateOf(false)
-    var numberOfColumns = mutableStateOf(1)
+    var numberOfColumns = mutableIntStateOf(1)
 
     // needed for remove
     val showAlertToRemove = mutableStateOf(false)
@@ -139,7 +140,7 @@ class HomeScreenViewModel @Inject constructor(
      * Number of columns
      */
     fun changeNumberOfColumns() {
-        numberOfColumns.value = if (numberOfColumns.value == 1) {
+        numberOfColumns.intValue = if (numberOfColumns.intValue == 1) {
             2
         } else {
             1

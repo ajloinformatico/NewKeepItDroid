@@ -157,7 +157,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(viewModel?.numberOfColumns?.value ?: 1),
+                columns = StaggeredGridCells.Fixed(viewModel?.numberOfColumns?.intValue ?: 1),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -167,7 +167,7 @@ fun HomeScreen(
                         top = 8.dp
                     ),
                 state = lazyListState,
-                horizontalArrangement = if ((viewModel?.numberOfColumns?.value ?: 1) == 1) {
+                horizontalArrangement = if ((viewModel?.numberOfColumns?.intValue ?: 1) == 1) {
                     Arrangement.Center
                 } else {
                     Arrangement.spacedBy(8.dp)
