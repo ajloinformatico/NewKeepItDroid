@@ -57,7 +57,7 @@ fun UpdateScreen(
             // that will include the real icon inside. In this case we use it to save.
             Row {
                 IconButton(
-                    onClick = { }
+                    onClick = { mainEvents(MainEvents.OnBackPressed) }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,

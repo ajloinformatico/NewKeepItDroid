@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     NewKeepItDroidNavHost(
                         modifier = Modifier.padding(innerPadding),
                         mainEvents = {
-                            manageEvents(
+                            manageMainEvents(
                                 event = it,
                                 keyBoardController = keyBoardController
                             )
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun manageEvents(event: MainEvents, keyBoardController: SoftwareKeyboardController?) {
+    private fun manageMainEvents(event: MainEvents, keyBoardController: SoftwareKeyboardController?) {
         when (event) {
             is MainEvents.ShowMessage -> ToastMaker.showMessage(
                 this,
@@ -57,6 +57,9 @@ class MainActivity : ComponentActivity() {
             is MainEvents.CustomMessage -> ToastMaker.showMessage(this, event.message)
             is MainEvents.HideKeyBoard -> {
                 keyBoardController?.hide()
+            }
+            is MainEvents.OnBackPressed -> {
+                onBackPressedDispatcher.onBackPressed()
             }
         }
     }

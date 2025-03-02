@@ -55,7 +55,7 @@ fun SearchScreen(
         },
         leadingIcon = {
             IconButton(
-                onClick = { /*TODO*/ }
+                onClick = { mainEvents(MainEvents.OnBackPressed) }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

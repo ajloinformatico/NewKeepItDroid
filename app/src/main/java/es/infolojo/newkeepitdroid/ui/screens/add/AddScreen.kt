@@ -60,7 +60,7 @@ fun AddScreen(
                 // IconButton can be used as a clickable element with the icon as a composable param
                 // that will include the real icon inside. In this case we use it to save.
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "Back button clicked") }
+                    onClick = { mainEvents(MainEvents.OnBackPressed) }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
