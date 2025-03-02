@@ -184,7 +184,6 @@ fun AddScreen(
                     ),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = true,
-                        imeAction = ImeAction.Next,
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     value = viewModel?.content.orEmpty(),
