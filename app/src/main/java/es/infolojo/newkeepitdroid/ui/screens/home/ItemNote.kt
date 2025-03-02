@@ -2,8 +2,9 @@ package es.infolojo.newkeepitdroid.ui.screens.home
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +46,7 @@ private const val MAX_LENGTH_CONTENT = 40
 /**
  * Row of the home screen
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemNote(
     noteVO: NoteVO? = null,
@@ -58,12 +60,19 @@ fun ItemNote(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                noteVO?.id?.let { noteId ->
-                    Log.d("TonyTest", "onClick")
-                    events(HomeScreenGridEvents.Update(noteId))
+            // needed combinedClickable for remove and update instead of simple click
+            .combinedClickable(
+                onClick = {
+                    noteVO?.id?.let { noteId ->
+                        events(HomeScreenGridEvents.Update(noteId))
+                    }
+                },
+                onLongClick = {
+                    noteVO?.id?.let { noteId ->
+                        events(HomeScreenGridEvents.Delete(id = noteId, noteVO = noteVO))
+                    }
                 }
-            }
+            )
     ) {
         // region header
         Row(

@@ -150,9 +150,9 @@ fun HomeScreen(
                         bottom = 8.dp,
                         top = 8.dp
                     ),
-                // contenido centrado
+                // content centered
                 horizontalAlignment = Alignment.CenterHorizontally,
-                // esoacio entre items de 8dps
+                // space between items of 8.dp
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
