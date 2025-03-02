@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -57,7 +57,7 @@ fun ItemNote(
     var expanded by rememberSaveable { mutableStateOf((noteVO?.content?.length ?: 0) < MAX_LENGTH_CONTENT) }
     var dropMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             // needed combinedClickable for remove and update instead of simple click
