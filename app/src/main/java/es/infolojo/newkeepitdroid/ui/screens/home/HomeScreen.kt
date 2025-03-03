@@ -1,6 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,28 +36,53 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
+import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
+import es.infolojo.newkeepitdroid.utils.getSize
+
+private const val PREVIEW_NOTES_SIZE = 8
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel? = hiltViewModel(),
-    isPreview: Boolean = false
+    isPreview: Boolean = false,
+    mainEvents: ((MainEvents) -> Unit) = {},
+    navHostController: NavHostController? = null
 ) {
+    // init viewModel
+    viewModel?.init(mainEvents = mainEvents, navController = navHostController)
+
+    // observe notes states
+    val notes = viewModel?.notes?.collectAsState(initial = emptyList())
+    // needed to manage number of columns. In the other way with simple lazy list is ok
+    val lazyListState = rememberLazyStaggeredGridState()
+
+    // custom back button
+    BackHandler(enabled = true) {
+        mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Home))
+    }
+
     Scaffold(
         topBar = {
             // appBar preparada para incluir títulos he iconos
             TopAppBar(
                 // shadow similar a elevaion en xml
-                modifier = Modifier.fillMaxWidth().shadow(2.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(2.dp),
                 title = {
                     Text(text = stringResource(R.string.my_notes), fontWeight = FontWeight.SemiBold)
                 },
 
                 // aquí se incluye la parte de los iconos
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        viewModel?.openSearchScreen()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.search_your_note)
@@ -62,44 +90,62 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // DropDown component
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        viewModel?.changeNumberOfColumns()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = stringResource(R.string.update_number_of_columns)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // DropDown component (when click update dropMenuExpanded state)
+                    IconButton(onClick = { viewModel?.clickInDropMenuIcon() }) {
                         Icon(
                             painterResource(R.drawable.baseline_filter_list_24),
                             contentDescription = stringResource(R.string.filter_by)
                         )
                     }
                     DropdownMenu(
-                        expanded = false,
-                        onDismissRequest = { /*TODO*/ }
+                        expanded = viewModel?.dropMenuExpanded?.value == true,
+                        onDismissRequest = { viewModel?.restartDropMenuExpanded() }
                     ) {
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.creation_date_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByDate()
+                            }
                         )
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.ascend_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByTitleAscend()
+                            }
                         )
                         DropdownMenuItem(
                             text = {
                                 Text(text = stringResource(R.string.descend_filter))
                             },
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                viewModel?.filterByTitleDescend()
+                            }
                         )
                     }
                 }
             )
         },
-        // boton flotante
+        // floating button to add a new note
         floatingActionButton = {
             FloatingActionButton(
                 shape = CircleShape,
-                onClick = { /*TODO*/ }
+                onClick = {
+                    viewModel?.openAddScreen()
+                }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.baseline_add_circle_outline_24),
@@ -111,51 +157,108 @@ fun HomeScreen(
     ) { innerPadding ->
         // Contenido de la pantalla con contenedor columna y el contenido ajustado al centro
         Column(
-            modifier = Modifier.fillMaxWidth().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(viewModel?.numberOfColumns?.intValue ?: 1),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 8.dp,
+                        top = 8.dp
+                    ),
+                state = lazyListState,
+                horizontalArrangement = if ((viewModel?.numberOfColumns?.intValue ?: 1) == 1) {
+                    Arrangement.Center
+                } else {
+                    Arrangement.spacedBy(8.dp)
+                },
+                verticalItemSpacing = 8.dp,
+                content = {
+
+                    items(
+                        if (isPreview) {
+                            PREVIEW_NOTES_SIZE
+                        } else {
+                            notes?.value.getSize()
+                        }
+                    ) {
+                        if (isPreview) ItemNote() else {
+                            notes?.value?.getOrNull(it)?.let { noteVO ->
+                                ItemNote(
+                                    noteVO = noteVO,
+                                    events = viewModel::manageHomeScreenGridEvents
+                                )
+                            }
+                        }
+                    }
+                    // to do a clipToPadding false
+                    item {
+                        Box(modifier = Modifier.size(80.dp))
+                    }
+                }
+            )
+
+            /**
             // RecyclerView
             LazyColumn(
-                modifier = Modifier.fillMaxWidth().padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 8.dp,
-                    top = 8.dp
-                ),
-                // contenido centrado
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 8.dp,
+                        top = 8.dp
+                    ),
+                // content centered
                 horizontalAlignment = Alignment.CenterHorizontally,
-                // esoacio entre items de 8dps
+                // space between items of 8.dp
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(8) {
-                    ItemNote()
+                items(
+                    if (isPreview) {
+                        PREVIEW_NOTES_SIZE
+                    } else {
+                        notes?.value.getSize()
+                    }
+                ) {
+                    if (isPreview) ItemNote() else {
+                        notes?.value?.getOrNull(it)?.let { noteVO ->
+                            ItemNote(
+                                noteVO = noteVO,
+                                events = viewModel::manageHomeScreenGridEvents
+                            )
+                        }
+                    }
                 }
                 // para hacer un clipToPadding false
                 item {
                     Box(modifier = Modifier.size(80.dp))
                 }
             }
+            */
 
-            // diálogo de alerta
-            AnimatedVisibility(visible = false) {
-                AlertDialog(
-                    text = { Text(text = stringResource(R.string.add_a_new_note)) },
-                    title = {
-                        Text(
-                            text = stringResource(R.string.add_note),
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    onDismissRequest = { /* TODO */ },
-                    confirmButton = { /* TODO */ }
-                )
-            }
+            // Dialog alert to remove a note
+            RegularAlertDialogComponent(
+                title = "${viewModel?.noteToRemove?.title.orEmpty()} ${stringResource(R.string.will_be_removed).lowercase()}",
+                text = "${stringResource(R.string.shure_to_remove)} ${viewModel?.noteToRemove?.title.orEmpty()} ?",
+                onConfirm = {
+                    viewModel?.removeSelectedNote()
+                },
+                onDismiss = {
+                    viewModel?.restartRemoveStates()
+                },
+                enabled = viewModel?.showAlertToRemove?.value == true
+            )
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

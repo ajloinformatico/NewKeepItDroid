@@ -11,3 +11,19 @@ fun String.validateTitleOnUpdate(originalValue: String): Boolean =
 
 fun String.validateContentOnUpdate(originalValue: String): Boolean =
     this.validateContent() && !this.equals(originalValue, ignoreCase = true)
+
+/**
+ * Capitalizes the first letter of each word in a sentence.
+ */
+fun String.capitalizeSentence(): String {
+    var newText = ""
+    this.split(" ").map {
+        newText += " " + it.replaceFirstChar {
+            firstChar -> firstChar.uppercase()
+        }
+    }
+    newText.replaceFirstChar { "" }
+    return newText
+}
+
+fun String.lengthOfWords(): Int = this.split(" ").size

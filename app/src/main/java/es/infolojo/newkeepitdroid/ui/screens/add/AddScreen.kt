@@ -1,16 +1,16 @@
 package es.infolojo.newkeepitdroid.ui.screens.add
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -30,15 +31,16 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
-
-private const val CLASS_NAME = "AddScreen"
+import es.infolojo.newkeepitdroid.utils.capitalizeSentence
 
 @Composable
 fun AddScreen(
@@ -60,7 +62,7 @@ fun AddScreen(
                 // IconButton can be used as a clickable element with the icon as a composable param
                 // that will include the real icon inside. In this case we use it to save.
                 IconButton(
-                    onClick = { Log.d(CLASS_NAME, "Back button clicked") }
+                    onClick = { mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Add)) }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -70,9 +72,37 @@ fun AddScreen(
 
                 // Space between first and second Icons. with weight 1 we will take all the space
                 // and have the icons at the ends of the screens.
-                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    modifier = Modifier.weight(1f)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                    text = stringResource(R.string.add_note).capitalizeSentence()
+                )
 
                 // Same of the previous IconButton. But in this case it is to save
+                IconButton(
+                    onClick = {
+                        viewModel?.insertNote()
+                    },
+                    enabled = viewModel?.buttonValidated == true
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_save_24),
+                        contentDescription = stringResource(R.string.save_icon)
+                    )
+                }
+            }
+        },
+        // floating button to add a new note
+        floatingActionButton = {
+            FloatingActionButton(
+                shape = CircleShape,
+                // onClick will be manager in IconButton
+                onClick = { /*no-op*/ }
+            ) {
                 IconButton(
                     onClick = {
                         viewModel?.insertNote()
@@ -184,7 +214,6 @@ fun AddScreen(
                     ),
                     keyboardOptions = KeyboardOptions(
                         autoCorrectEnabled = true,
-                        imeAction = ImeAction.Next,
                         capitalization = KeyboardCapitalization.Sentences
                     ),
                     value = viewModel?.content.orEmpty(),

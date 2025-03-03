@@ -25,13 +25,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
+import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchScreenViewModel? = hiltViewModel(),
-    isPreview: Boolean = false
+    isPreview: Boolean = false,
+    mainEvents: (MainEvents) -> Unit = {}
 ) {
     var searchActive by rememberSaveable { mutableStateOf(true) }
     // TODO:search bar
@@ -53,7 +56,7 @@ fun SearchScreen(
         },
         leadingIcon = {
             IconButton(
-                onClick = { /*TODO*/ }
+                onClick = { mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Search)) }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
