@@ -32,6 +32,7 @@ class HomeScreenViewModel @Inject constructor(
 
     // states
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
+    private var lastHomeSorter: SortOrder = SortOrder.DateDescend
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
     var dropMenuExpanded = mutableStateOf(false)
     var numberOfColumns = mutableIntStateOf(1)
@@ -45,21 +46,18 @@ class HomeScreenViewModel @Inject constructor(
 
     // nav
     private var navController: NavHostController? = null
-
     // endregion attr
 
     // region public methods
-    init {
-        restartRemoveStates()
-        restartDropMenuExpanded()
-        viewModelScope.launch(Dispatchers.IO) {
-            getNotes()
-        }
-    }
-
     fun init(mainEvents: ((MainEvents) -> Unit), navController: NavHostController?) {
         this.mainEvents = mainEvents
         this.navController = navController
+        restartRemoveStates()
+        restartDropMenuExpanded()
+        // recover notes
+        viewModelScope.launch(Dispatchers.IO) {
+            getNotes(lastHomeSorter)
+        }
     }
 
     /**
@@ -174,6 +172,7 @@ class HomeScreenViewModel @Inject constructor(
 
     // region private methods
     private suspend fun getNotes(sorterOrder: SortOrder = SortOrder.DateDescend) {
+        lastHomeSorter = sorterOrder
         getNotesUseCase(sorterOrder).collect {
             _notes.value = it.toVO()
         }

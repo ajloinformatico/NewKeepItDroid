@@ -191,7 +191,7 @@ fun HomeScreen(
                             }
                         }
                     }
-                    // para hacer un clipToPadding false
+                    // to do a clipToPadding false
                     item {
                         Box(modifier = Modifier.size(80.dp))
                     }
