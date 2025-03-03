@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
@@ -148,7 +149,7 @@ fun HomeScreen(
                 }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.baseline_add_circle_outline_24),
+                    imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.add_a_new_note)
                 )
             }

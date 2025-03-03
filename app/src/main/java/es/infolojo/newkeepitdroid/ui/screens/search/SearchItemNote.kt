@@ -1,12 +1,17 @@
 package es.infolojo.newkeepitdroid.ui.screens.search
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,48 +33,62 @@ import es.infolojo.newkeepitdroid.R
 /**
  * Row of the search screen
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchItemNote() {
-    Row(
-        modifier = Modifier.fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(start = 8.dp, top = 8.dp, bottom = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Card(
+        modifier = Modifier.combinedClickable(
+            onClick = { /* viewModel?.openUpdate() */ },
+            onLongClick = { /* viewModel?.showDeleteDialog() */ },
+            enabled = true
+        ),
+        border = BorderStroke(1.dp, if (!isSystemInDarkTheme()) Color.Black else Color.White)
     ) {
         Row(
-            Modifier.weight(1f).padding(end = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.title),
-                    style = TextStyle(lineHeight = 1.5.em),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    fontSize = 18.sp,
-                    overflow = TextOverflow.Ellipsis, // idem a elipsis end en xml
-                    maxLines = 1,
-                )
-                Text(
-                    text = stringResource(R.string.note_content),
-                    color = Color.Gray,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(),
-                    fontSize = 16.sp,
-                    style = TextStyle(lineHeight = 1.5.em)
-                )
-            }
-        }
-        Row {
-            IconButton(
-                onClick = { /*TODO*/ }
+            Row(
+                Modifier
+                    .weight(1f)
+                    .padding(end = 24.dp)
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.go_to_detail),
-                    tint = Color.Gray
-                )
+                Column {
+                    Text(
+                        text = stringResource(R.string.title),
+                        style = TextStyle(lineHeight = 1.5.em),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        fontSize = 18.sp,
+                        overflow = TextOverflow.Ellipsis, // idem a elipsis end en xml
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = stringResource(R.string.note_content),
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth(),
+                        fontSize = 16.sp,
+                        style = TextStyle(lineHeight = 1.5.em)
+                    )
+                }
             }
-        }
+            Row {
+                IconButton(
+                    onClick = { /* viewModel?.openUpdate() */ }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = stringResource(R.string.go_to_detail),
+                        tint = Color.Gray
+                    )
+                }
+            }
 
+        }
     }
 }
 
