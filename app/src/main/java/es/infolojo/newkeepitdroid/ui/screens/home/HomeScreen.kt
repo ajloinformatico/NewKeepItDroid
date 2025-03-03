@@ -1,5 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.utils.getSize
@@ -58,6 +60,11 @@ fun HomeScreen(
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
     // needed to manage number of columns. In the other way with simple lazy list is ok
     val lazyListState = rememberLazyStaggeredGridState()
+
+    // custom back button
+    BackHandler(enabled = true) {
+        mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Home))
+    }
 
     Scaffold(
         topBar = {
@@ -239,7 +246,7 @@ fun HomeScreen(
 
             // Dialog alert to remove a note
             RegularAlertDialogComponent(
-                title = "${viewModel?.noteToRemove?.title.orEmpty()} ${stringResource(R.string.will_be_removed)}",
+                title = "${viewModel?.noteToRemove?.title.orEmpty()} ${stringResource(R.string.will_be_removed).lowercase()}",
                 text = "${stringResource(R.string.shure_to_remove)} ${viewModel?.noteToRemove?.title.orEmpty()} ?",
                 onConfirm = {
                     viewModel?.removeSelectedNote()

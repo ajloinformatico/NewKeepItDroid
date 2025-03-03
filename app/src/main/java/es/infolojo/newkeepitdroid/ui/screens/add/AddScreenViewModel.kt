@@ -11,6 +11,7 @@ import es.infolojo.newkeepitdroid.domain.data.common.DateModel
 import es.infolojo.newkeepitdroid.domain.usecase.InsertNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
 import es.infolojo.newkeepitdroid.domain.usecase.UpdateNoteUseCase
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.utils.validateContent
@@ -91,6 +92,7 @@ class AddScreenViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.Main) {
                     mainEvents(MainEvents.HideKeyBoard)
                     mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATA_BASE_UPDATED))
+                    mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Add))
                 }
             } else {
                 val newNoteAddedId = insertNoteUseCase(newNote)
@@ -100,6 +102,7 @@ class AddScreenViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.Main) {
                     mainEvents(MainEvents.HideKeyBoard)
                     mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATABASE_NOTE_ADDED))
+                    mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Add))
                 }
             }
         }

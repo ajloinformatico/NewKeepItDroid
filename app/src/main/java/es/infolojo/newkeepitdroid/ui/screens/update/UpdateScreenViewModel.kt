@@ -12,6 +12,7 @@ import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
 import es.infolojo.newkeepitdroid.domain.usecase.SortOrder
 import es.infolojo.newkeepitdroid.domain.usecase.UpdateNoteUseCase
+import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.utils.validateContent
@@ -124,6 +125,7 @@ class UpdateScreenViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.Main) {
                 mainEvents(MainEvents.HideKeyBoard)
                 mainEvents(MainEvents.ShowMessage(UIMessagesVO.DATA_BASE_UPDATED))
+                mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Update))
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 import es.infolojo.newkeepitdroid.utils.getFormattedDate
+import es.infolojo.newkeepitdroid.utils.lengthOfWords
 
 private const val MAX_LENGTH_CONTENT = 40
 
@@ -54,7 +57,7 @@ fun ItemNote(
 ) {
 
     // At the first load check if note content is longer than MAX_LENGTH_CONTENT
-    var expanded by rememberSaveable { mutableStateOf((noteVO?.content?.length ?: 0) < MAX_LENGTH_CONTENT) }
+    var expanded by rememberSaveable { mutableStateOf((noteVO?.content?.lengthOfWords() ?: 0) < MAX_LENGTH_CONTENT) }
     var dropMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -144,30 +147,29 @@ fun ItemNote(
         // region body
         // note content
         AnimatedVisibility(visible = expanded) {
-            Row(
+            Column(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 16.dp, bottom = 8.dp, top = 8.dp)
                     .align(Alignment.Start)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = noteVO?.content ?: stringResource(R.string.note_content),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 24.dp),
-                    color = Color.Gray,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 16.sp,
-                    style = TextStyle(lineHeight = 1.5.em)
-                )
                 Text(
                     text = noteVO?.date?.getFormattedDate() ?: stringResource(R.string.note_date),
                     color = Color.Gray,
                     fontSize = 12.sp,
                     style = TextStyle(lineHeight = 0.em),
-                    fontWeight = FontWeight.Light
+                    fontWeight = FontWeight.Light,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth().align(Alignment.End)
                 )
+                Text(
+                    text = noteVO?.content ?: stringResource(R.string.note_content),
+                    color = Color.Gray,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 16.sp,
+                    style = TextStyle(lineHeight = 1.5.em)
+                )
+
             }
         }
 

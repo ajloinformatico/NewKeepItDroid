@@ -7,5 +7,5 @@ sealed interface MainEvents {
     data class ShowMessage(val message: UIMessagesVO) : MainEvents
     data class CustomMessage(val message: String) : MainEvents
     data object HideKeyBoard : MainEvents
-    data object OnBackPressed : MainEvents
+    data class OnBackPressed(val screensRoutes: ScreensRoutes) : MainEvents
 }
