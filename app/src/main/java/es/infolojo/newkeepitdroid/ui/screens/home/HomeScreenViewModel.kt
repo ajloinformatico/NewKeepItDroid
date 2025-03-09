@@ -29,11 +29,11 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     // region attr
-
     // states
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
-    private var lastHomeSorter: SortOrder = SortOrder.DateDescend
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
+
+    private var lastHomeSorter: SortOrder = SortOrder.DateDescend
     var dropMenuExpanded = mutableStateOf(false)
     var numberOfColumns = mutableIntStateOf(1)
 
