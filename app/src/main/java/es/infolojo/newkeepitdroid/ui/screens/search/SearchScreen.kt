@@ -31,7 +31,6 @@ import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
-import es.infolojo.newkeepitdroid.utils.getSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,11 +52,10 @@ fun SearchScreen(
     // observe notes state
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
 
-
     // TODO:search bar
     SearchBar(
         modifier = Modifier.fillMaxWidth(),
-        query = stringResource(R.string.search),
+        query = viewModel?.searchText?.value.orEmpty(),
         onQueryChange = {
             // TODO: search (queary search)
             viewModel?.updateSearchText(it)
@@ -105,9 +103,8 @@ fun SearchScreen(
             items(notes?.takeIf { !isPreview }?.value?.size ?: 8) { index ->
                 notes?.value?.getOrNull(index)?.let {
                     if (isPreview) {
-                        SearchItemNote()
+                        SearchItemNote(it, viewModel::manageHomeScreenGridEvents)
                     } else {
-                        // TODO pass noteVO and viewModel manage events
                         SearchItemNote()
                     }
                 }

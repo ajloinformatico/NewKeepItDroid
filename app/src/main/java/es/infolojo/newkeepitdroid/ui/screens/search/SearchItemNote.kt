@@ -2,7 +2,6 @@ package es.infolojo.newkeepitdroid.ui.screens.search
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,17 +27,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 
 /**
  * Row of the search screen
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SearchItemNote() {
+fun SearchItemNote(
+    note: NoteVO? = null,
+    events: (SearchScreenGridEvents) -> Unit = {}
+) {
     Card(
         modifier = Modifier.combinedClickable(
-            onClick = { /* viewModel?.openUpdate() */ },
-            onLongClick = { /* viewModel?.showDeleteDialog() */ },
+            onClick = {
+                note?.id?.let {
+                    events(SearchScreenGridEvents.Update(it))
+                }
+            },
+            onLongClick = {
+                note?.let {
+                    events(SearchScreenGridEvents.Delete(it))
+                }
+            },
             enabled = true
         ),
         border = BorderStroke(1.dp, if (!isSystemInDarkTheme()) Color.Black else Color.White)
@@ -57,7 +67,7 @@ fun SearchItemNote() {
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.title),
+                        text = note?.title ?: stringResource(R.string.title),
                         style = TextStyle(lineHeight = 1.5.em),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -68,7 +78,7 @@ fun SearchItemNote() {
                         maxLines = 1,
                     )
                     Text(
-                        text = stringResource(R.string.note_content),
+                        text = note?.content ?: stringResource(R.string.note_content),
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
@@ -78,7 +88,11 @@ fun SearchItemNote() {
             }
             Row {
                 IconButton(
-                    onClick = { /* viewModel?.openUpdate() */ }
+                    onClick = {
+                        note?.id?.let {
+                            events(SearchScreenGridEvents.Update(it))
+                        }
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

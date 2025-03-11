@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.infolojo.newkeepitdroid.domain.usecase.DeleteNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
+import es.infolojo.newkeepitdroid.domain.usecase.SearchNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.SortOrder
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
@@ -32,14 +33,15 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
-    private val deleteNoteUseCase: DeleteNoteUseCase
+    private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val searchNotesUseCase: SearchNotesUseCase
 ) : ViewModel() {
 
     // region attr
     // states
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
-    val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
     val searchText = mutableStateOf("")
+    val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
 
     // needed for remove
     val showAlertToRemove = mutableStateOf(false)
@@ -122,17 +124,11 @@ class SearchScreenViewModel @Inject constructor(
      * - Then unify notes and map to VO.
      */
     private suspend fun searchNotes() {
-        searchText.value.takeIf { it.isNotBlank() }?.let { textToSearch ->
-            // unify in a useCase the search by title and content
-            getNotesUseCase(SortOrder.ByTitle(textToSearch)).collect { notesByTitle ->
-                getNotesUseCase(SortOrder.ByContent(textToSearch)).collect { notesByContent ->
-                    // save first notes found with title and then add after these notes all the notes found by content
-                    val notesByContentToAdd = notesByContent.filter { !notesByTitle.contains(it) }
-                    _notes.value = (notesByTitle + notesByContentToAdd).toVO()
-                }
-            }
-        } ?: getNotesUseCase(SortOrder.DateDescend).collect { notes -> _notes.value = notes.toVO() }
+        (searchText.value.takeIf { it.isNotBlank() }?.let { textToSearch ->
+            searchNotesUseCase(textToSearch)
+        } ?: getNotesUseCase(SortOrder.DateDescend)).collect { notes ->
+            _notes.value = notes.toVO()
+        }
     }
     // endregion private
-
 }
