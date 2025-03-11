@@ -102,7 +102,7 @@ fun SearchScreen(
             // in preview mode only load 8 items.
             items(notes?.takeIf { !isPreview }?.value?.size ?: 8) { index ->
                 notes?.value?.getOrNull(index)?.let {
-                    if (isPreview) {
+                    if (!isPreview) {
                         SearchItemNote(it, viewModel::manageHomeScreenGridEvents)
                     } else {
                         SearchItemNote()
