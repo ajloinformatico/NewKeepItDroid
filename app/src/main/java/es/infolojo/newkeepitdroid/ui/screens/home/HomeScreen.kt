@@ -1,6 +1,8 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +17,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,7 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,7 +52,7 @@ import es.infolojo.newkeepitdroid.utils.getSize
 
 private const val PREVIEW_NOTES_SIZE = 8
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeScreenViewModel? = hiltViewModel(),
@@ -79,7 +85,7 @@ fun HomeScreen(
                     Text(text = stringResource(R.string.my_notes), fontWeight = FontWeight.SemiBold)
                 },
 
-                // aquí se incluye la parte de los iconos
+                // Here goes icons
                 actions = {
                     IconButton(onClick = {
                         viewModel?.openSearchScreen()
@@ -91,14 +97,30 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    IconButton(onClick = {
-                        viewModel?.changeNumberOfColumns()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Face,
-                            contentDescription = stringResource(R.string.update_number_of_columns)
-                        )
-                    }
+                    // Text that works as a button to show current view.
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Normal
+                                )
+                            ) {
+                                append(stringResource(R.string.view))
+                            }
+                            append(" ")
+                            append("${viewModel?.numberOfColumns?.intValue ?: 1}")
+                        },
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .combinedClickable(
+                                role = Role.Button
+                            ) {
+                                viewModel?.changeNumberOfColumns()
+                            }
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
 
                     // DropDown component (when click update dropMenuExpanded state)
