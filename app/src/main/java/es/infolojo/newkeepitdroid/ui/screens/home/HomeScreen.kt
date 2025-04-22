@@ -1,6 +1,5 @@
 package es.infolojo.newkeepitdroid.ui.screens.home
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
-import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.utils.getSize
@@ -67,11 +65,6 @@ fun HomeScreen(
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
     // needed to manage number of columns. In the other way with simple lazy list is ok
     val lazyListState = rememberLazyStaggeredGridState()
-
-    // custom back button
-    BackHandler(enabled = true) {
-        mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Home))
-    }
 
     Scaffold(
         topBar = {

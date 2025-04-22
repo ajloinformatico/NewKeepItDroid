@@ -56,7 +56,7 @@ fun NewKeepItDroidNavHost(
             HomeScreen(mainEvents = mainEvents, navHostController = navController)
         }
         composable(ScreensRoutes.Search.route) {
-            SearchScreen(modifier = modifier, mainEvents = mainEvents)
+            SearchScreen(modifier = modifier, mainEvents = mainEvents, navHostController = navController)
         }
         composable(ScreensRoutes.Add.route) {
             AddScreen(modifier = modifier, mainEvents = mainEvents)

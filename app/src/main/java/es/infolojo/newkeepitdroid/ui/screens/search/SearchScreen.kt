@@ -57,12 +57,10 @@ fun SearchScreen(
         modifier = Modifier.fillMaxWidth(),
         query = viewModel?.searchText?.value.orEmpty(),
         onQueryChange = {
-            // TODO: search (queary search)
             viewModel?.updateSearchText(it)
             Log.d("TonyTest", "onQuerySearch $it")
         },
         onSearch = {
-            // TODO: search (onSearch)
             viewModel?.updateSearchText(it)
             Log.d("TonyTest", "oSearch")
         },
@@ -75,7 +73,11 @@ fun SearchScreen(
         },
         leadingIcon = {
             IconButton(
-                onClick = { mainEvents(MainEvents.OnBackPressed(ScreensRoutes.Search)) }
+                onClick = {
+                    mainEvents(
+                        MainEvents.OnBackPressed(ScreensRoutes.Search)
+                    )
+                }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
