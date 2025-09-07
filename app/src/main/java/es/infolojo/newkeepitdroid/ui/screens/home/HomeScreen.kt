@@ -23,7 +23,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -45,7 +44,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
+import es.infolojo.newkeepitdroid.ui.screens.commons.NewKeepItDroidSurfaceComponent
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 import es.infolojo.newkeepitdroid.utils.getSize
 
 private const val PREVIEW_NOTES_SIZE = 8
@@ -66,11 +67,12 @@ fun HomeScreen(
     // needed to manage number of columns. In the other way with simple lazy list is ok
     val lazyListState = rememberLazyStaggeredGridState()
 
-    Scaffold(
+    NewKeepItDroidSurfaceComponent(
         topBar = {
             // appBar preparada para incluir títulos he iconos
             TopAppBar(
                 // shadow similar a elevaion en xml
+                colors = ThemeHelper.getTopBarColors(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .shadow(2.dp),

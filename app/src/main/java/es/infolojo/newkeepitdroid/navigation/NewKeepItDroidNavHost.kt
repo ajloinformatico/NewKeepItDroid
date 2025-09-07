@@ -48,7 +48,7 @@ fun NewKeepItDroidNavHost(
         popExitTransition = {
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.End,
-                tween(700)
+                tween(ANIMATION_TRANSITION_DURATION)
             )
         }
     ) {
@@ -56,7 +56,7 @@ fun NewKeepItDroidNavHost(
             HomeScreen(mainEvents = mainEvents, navHostController = navController)
         }
         composable(ScreensRoutes.Search.route) {
-            SearchScreen(modifier = modifier, mainEvents = mainEvents, navHostController = navController)
+            SearchScreen(mainEvents = mainEvents, navHostController = navController)
         }
         composable(ScreensRoutes.Add.route) {
             AddScreen(modifier = modifier, mainEvents = mainEvents)

@@ -13,36 +13,32 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
-import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    modifier: Modifier = Modifier,
     viewModel: SearchScreenViewModel? = hiltViewModel(),
     isPreview: Boolean = false,
     navHostController: NavHostController? = null,
     mainEvents: (MainEvents) -> Unit = {}
 ) {
-    var searchActive by rememberSaveable { mutableStateOf(true) }
-
     // init viewModel
     viewModel?.init(
         mainEvents = mainEvents,
@@ -51,10 +47,18 @@ fun SearchScreen(
 
     // observe notes state
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
+    val backgroundColor = ThemeHelper.getSurfaceBackGroundColor()
 
-    // TODO:search bar
     SearchBar(
         modifier = Modifier.fillMaxWidth(),
+        colors = SearchBarDefaults.colors(
+            containerColor = backgroundColor,
+            dividerColor = Color.LightGray, // opcional
+            inputFieldColors = TextFieldDefaults.colors(
+                focusedContainerColor = backgroundColor,
+                unfocusedContainerColor = backgroundColor,
+            )
+        ),
         query = viewModel?.searchText?.value.orEmpty(),
         onQueryChange = {
             viewModel?.updateSearchText(it)
@@ -64,19 +68,15 @@ fun SearchScreen(
             viewModel?.updateSearchText(it)
             Log.d("TonyTest", "oSearch")
         },
-        active = searchActive,
-        onActiveChange = {
-            searchActive = it
-        },
+        active = true,
+        onActiveChange = { /*no-op*/ },
         placeholder = {
             Text(text = stringResource(R.string.search))
         },
         leadingIcon = {
             IconButton(
                 onClick = {
-                    mainEvents(
-                        MainEvents.OnBackPressed(ScreensRoutes.Search)
-                    )
+                    navHostController?.popBackStack()
                 }
             ) {
                 Icon(
