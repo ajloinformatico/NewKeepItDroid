@@ -1,6 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.search
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,11 +62,9 @@ fun SearchScreen(
         query = viewModel?.searchText?.value.orEmpty(),
         onQueryChange = {
             viewModel?.updateSearchText(it)
-            Log.d("TonyTest", "onQuerySearch $it")
         },
         onSearch = {
             viewModel?.updateSearchText(it)
-            Log.d("TonyTest", "oSearch")
         },
         active = true,
         onActiveChange = { /*no-op*/ },
@@ -96,9 +94,9 @@ fun SearchScreen(
                     bottom = 8.dp,
                     top = 16.dp
                 ),
-            // contenido centrado
+            // center content
             horizontalAlignment = Alignment.CenterHorizontally,
-            // esoacio entre items de 8dps
+            // space between items of 8dps
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // in preview mode only load 8 items.
@@ -129,6 +127,12 @@ fun SearchScreen(
             },
             enabled = viewModel?.showAlertToRemove?.value == true
         )
+    }
+
+    // This is needed because SearchBar is active = true and when is active it is consuming
+    // system buttons.
+    BackHandler(enabled = true) {
+        navHostController?.popBackStack()
     }
 }
 
