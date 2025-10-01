@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val COLUMNS_1 = 1
+private const val COLUMNS_2 = 2
+
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
@@ -138,11 +141,9 @@ class HomeScreenViewModel @Inject constructor(
      * Number of columns
      */
     fun changeNumberOfColumns() {
-        numberOfColumns.intValue = if (numberOfColumns.intValue == 1) {
-            2
-        } else {
-            1
-        }
+        numberOfColumns.intValue = COLUMNS_2.takeIf {
+            numberOfColumns.intValue == COLUMNS_1
+        } ?: COLUMNS_1
     }
 
     /**
