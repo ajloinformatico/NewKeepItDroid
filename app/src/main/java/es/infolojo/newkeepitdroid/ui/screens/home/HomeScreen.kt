@@ -67,11 +67,12 @@ fun HomeScreen(
     // needed to manage number of columns. In the other way with simple lazy list is ok
     val lazyListState = rememberLazyStaggeredGridState()
 
+    // custom Surface app
     NewKeepItDroidSurfaceComponent(
         topBar = {
-            // appBar preparada para incluir títulos he iconos
+            // native compose appBar. It is prepared to include titles and icons
             TopAppBar(
-                // shadow similar a elevaion en xml
+                // Shadow shows similar effect as elevation property in xml with android View
                 colors = ThemeHelper.getTopBarColors(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -173,7 +174,7 @@ fun HomeScreen(
         },
         bottomBar = { /*here will be the add*/ }
     ) { innerPadding ->
-        // Contenido de la pantalla con contenedor columna y el contenido ajustado al centro
+        // screen content by a columns with center content
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -199,7 +200,6 @@ fun HomeScreen(
                 },
                 verticalItemSpacing = 8.dp,
                 content = {
-
                     items(
                         if (isPreview) {
                             PREVIEW_NOTES_SIZE
@@ -222,45 +222,6 @@ fun HomeScreen(
                     }
                 }
             )
-
-            /**
-            // RecyclerView
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 8.dp,
-                        top = 8.dp
-                    ),
-                // content centered
-                horizontalAlignment = Alignment.CenterHorizontally,
-                // space between items of 8.dp
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(
-                    if (isPreview) {
-                        PREVIEW_NOTES_SIZE
-                    } else {
-                        notes?.value.getSize()
-                    }
-                ) {
-                    if (isPreview) ItemNote() else {
-                        notes?.value?.getOrNull(it)?.let { noteVO ->
-                            ItemNote(
-                                noteVO = noteVO,
-                                events = viewModel::manageHomeScreenGridEvents
-                            )
-                        }
-                    }
-                }
-                // para hacer un clipToPadding false
-                item {
-                    Box(modifier = Modifier.size(80.dp))
-                }
-            }
-            */
 
             // Dialog alert to remove a note
             RegularAlertDialogComponent(

@@ -168,7 +168,7 @@ fun AddScreen(
             // Line with horizontal to
             HorizontalDivider(modifier = Modifier.height(2.dp))
 
-            // region nota
+            // region note
             // Notes goes with his own column to group the content with more margins
             Column(modifier = Modifier
                 .fillMaxWidth()

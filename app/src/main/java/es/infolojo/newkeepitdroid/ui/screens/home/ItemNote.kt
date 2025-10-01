@@ -28,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 import es.infolojo.newkeepitdroid.utils.getFormattedDate
 import es.infolojo.newkeepitdroid.utils.lengthOfWords
 
@@ -155,7 +155,7 @@ fun ItemNote(
             ) {
                 Text(
                     text = noteVO?.date?.getFormattedDate() ?: stringResource(R.string.note_date),
-                    color = Color.Gray,
+                    color = ThemeHelper.getContentPrimaryColor(),
                     fontSize = 12.sp,
                     style = TextStyle(lineHeight = 0.em),
                     fontWeight = FontWeight.Light,
@@ -164,7 +164,7 @@ fun ItemNote(
                 )
                 Text(
                     text = noteVO?.content ?: stringResource(R.string.note_content),
-                    color = Color.Gray,
+                    color = ThemeHelper.getContentPrimaryColor(),
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp,
                     style = TextStyle(lineHeight = 1.5.em)
@@ -184,7 +184,7 @@ fun ItemNote(
                 } else {
                     Icons.Default.KeyboardArrowDown
                 },
-                tint = Color.Gray,
+                tint = ThemeHelper.getContentPrimaryColor(),
                 contentDescription = stringResource(R.string.expand_and_collapse)
             )
         }

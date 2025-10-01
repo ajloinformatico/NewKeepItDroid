@@ -8,6 +8,10 @@ import androidx.room.Update
 import es.infolojo.newkeepitdroid.domain.data.dbo.NoteDBO
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * DataBase repository class
+ * Here we save all dataBase features
+ */
 @Dao
 interface LocalRepository {
     @Insert
