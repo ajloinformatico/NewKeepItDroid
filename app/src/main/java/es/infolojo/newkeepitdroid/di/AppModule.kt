@@ -13,6 +13,7 @@ import es.infolojo.newkeepitdroid.domain.usecase.DeleteNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.InsertNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
+import es.infolojo.newkeepitdroid.domain.usecase.SearchNotesUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.UpdateNoteUseCase
 
 @Module
@@ -50,4 +51,7 @@ object AppModule {
     // Provide the check note use case
     @Provides
     fun provideCheckNoteUseCase(repository: LocalRepository): IsNoteAlReadyInDataBase = IsNoteAlReadyInDataBase(repository)
+
+    @Provides
+    fun provideSearchNotesUseCase(getNotesUseCase: GetNotesUseCase): SearchNotesUseCase = SearchNotesUseCase(getNotesUseCase)
 }

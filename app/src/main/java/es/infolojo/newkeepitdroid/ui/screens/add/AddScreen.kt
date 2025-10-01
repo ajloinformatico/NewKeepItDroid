@@ -1,5 +1,6 @@
 package es.infolojo.newkeepitdroid.ui.screens.add
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -40,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
+import es.infolojo.newkeepitdroid.ui.screens.commons.NewKeepItDroidSurfaceComponent
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 import es.infolojo.newkeepitdroid.utils.capitalizeSentence
 
 @Composable
@@ -53,12 +55,12 @@ fun AddScreen(
     viewModel?.init(mainEvents)
 
     // Scaffold -> common structure for normal screen
-    Scaffold(
+    NewKeepItDroidSurfaceComponent(
         // Inside it we can add a regular topBar that we will use to include back and save buttons
         modifier = modifier.fillMaxWidth(),
         topBar = {
             // Row that fills all the screen content
-            Row {
+            Row(modifier.background(ThemeHelper.getSurfaceBackGroundColor())) {
                 // IconButton can be used as a clickable element with the icon as a composable param
                 // that will include the real icon inside. In this case we use it to save.
                 IconButton(
@@ -166,7 +168,7 @@ fun AddScreen(
             // Line with horizontal to
             HorizontalDivider(modifier = Modifier.height(2.dp))
 
-            // region nota
+            // region note
             // Notes goes with his own column to group the content with more margins
             Column(modifier = Modifier
                 .fillMaxWidth()
