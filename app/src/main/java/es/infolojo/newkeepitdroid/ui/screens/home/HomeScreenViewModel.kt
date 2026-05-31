@@ -8,12 +8,15 @@ import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.infolojo.newkeepitdroid.domain.usecase.DeleteNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
+import es.infolojo.newkeepitdroid.domain.usecase.GetThemeModeUseCase
+import es.infolojo.newkeepitdroid.domain.usecase.SetThemeModeUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.SortOrder
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toBO
 import es.infolojo.newkeepitdroid.ui.screens.vo.toVO
+import es.infolojo.newkeepitdroid.ui.theme.ThemeMode
 import es.infolojo.newkeepitdroid.utils.launchPostDelayed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,13 +31,18 @@ private const val COLUMNS_2 = 2
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase,
-    private val deleteNoteUseCase: DeleteNoteUseCase
+    private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val getThemeModeUseCase: GetThemeModeUseCase,
+    private val setThemeModeUseCase: SetThemeModeUseCase
 ) : ViewModel() {
 
     // region attr
     // states
     private val _notes = MutableStateFlow<List<NoteVO>>(emptyList())
     val notes: StateFlow<List<NoteVO>> = _notes.asStateFlow()
+
+    private val _themeMode = MutableStateFlow(ThemeMode.SYSTEM)
+    val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
     private var lastHomeSorter: SortOrder = SortOrder.DateDescend
     var dropMenuExpanded = mutableStateOf(false)
@@ -57,9 +65,19 @@ class HomeScreenViewModel @Inject constructor(
         this.navController = navController
         restartRemoveStates()
         restartDropMenuExpanded()
-        // recover notes
         viewModelScope.launch(Dispatchers.IO) {
             getNotes(lastHomeSorter)
+        }
+        viewModelScope.launch {
+            getThemeModeUseCase().collect { mode ->
+                _themeMode.value = mode
+            }
+        }
+    }
+
+    fun toggleTheme() {
+        viewModelScope.launch(Dispatchers.IO) {
+            setThemeModeUseCase(_themeMode.value.next())
         }
     }
 

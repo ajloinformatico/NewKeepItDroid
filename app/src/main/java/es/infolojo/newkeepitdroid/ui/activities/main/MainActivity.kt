@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -17,27 +19,34 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import dagger.hilt.android.AndroidEntryPoint
 import es.infolojo.newkeepitdroid.R
+import es.infolojo.newkeepitdroid.domain.usecase.GetThemeModeUseCase
 import es.infolojo.newkeepitdroid.navigation.NewKeepItDroidNavHost
 import es.infolojo.newkeepitdroid.navigation.ScreensRoutes
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.ui.theme.NewKeepItDroidTheme
+import es.infolojo.newkeepitdroid.ui.theme.ThemeMode
 import es.infolojo.newkeepitdroid.utils.ToastMaker
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var getThemeModeUseCase: GetThemeModeUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val keyBoardController = LocalSoftwareKeyboardController.current
-            // state to show closeApp dialog
             var showCloseAppDialog by rememberSaveable { mutableStateOf(false) }
+            val themeMode by getThemeModeUseCase().collectAsState(initial = ThemeMode.SYSTEM)
+            val isDark = themeMode.isDark(isSystemInDarkTheme())
 
-            NewKeepItDroidTheme {
+            NewKeepItDroidTheme(darkTheme = isDark) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NewKeepItDroidNavHost(
                         modifier = Modifier.padding(innerPadding),
@@ -45,14 +54,11 @@ class MainActivity : ComponentActivity() {
                             manageMainEvents(
                                 event = it,
                                 keyBoardController = keyBoardController,
-                                closeApp = {
-                                    showCloseAppDialog = true
-                                }
+                                closeApp = { showCloseAppDialog = true }
                             )
                         }
                     )
 
-                    // Dialog alert to closeApp
                     RegularAlertDialogComponent(
                         title = stringResource(R.string.close_app),
                         text = stringResource(R.string.are_you_sure_close_app),
@@ -70,7 +76,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun manageMainEvents(event: MainEvents, keyBoardController: SoftwareKeyboardController?, closeApp: () -> Unit) {
+    private fun manageMainEvents(
+        event: MainEvents,
+        keyBoardController: SoftwareKeyboardController?,
+        closeApp: () -> Unit
+    ) {
         when (event) {
             is MainEvents.ShowMessage -> ToastMaker.showMessage(
                 this,
