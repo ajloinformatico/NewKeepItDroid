@@ -10,3 +10,4 @@
 .cxx
 local.properties
 /*.patch
+/gradle/gradle-daemon-jvm.properties

@@ -16,6 +16,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -40,13 +43,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.NewKeepItDroidSurfaceComponent
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
+import es.infolojo.newkeepitdroid.ui.theme.ThemeMode
 import es.infolojo.newkeepitdroid.utils.getSize
 
 private const val PREVIEW_NOTES_SIZE = 8
@@ -64,6 +68,7 @@ fun HomeScreen(
 
     // observe notes states
     val notes = viewModel?.notes?.collectAsState(initial = emptyList())
+    val themeMode = viewModel?.themeMode?.collectAsState(initial = ThemeMode.SYSTEM)?.value ?: ThemeMode.SYSTEM
     // needed to manage number of columns. In the other way with simple lazy list is ok
     val lazyListState = rememberLazyStaggeredGridState()
 
@@ -83,6 +88,19 @@ fun HomeScreen(
 
                 // Here goes icons
                 actions = {
+                    IconButton(onClick = {
+                        viewModel?.toggleTheme()
+                    }) {
+                        Icon(
+                            imageVector = when (themeMode) {
+                                ThemeMode.SYSTEM -> Icons.Default.BrightnessAuto
+                                ThemeMode.LIGHT -> Icons.Default.LightMode
+                                ThemeMode.DARK -> Icons.Default.DarkMode
+                            },
+                            contentDescription = stringResource(R.string.toggle_theme)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
                     IconButton(onClick = {
                         viewModel?.openSearchScreen()
                     }) {

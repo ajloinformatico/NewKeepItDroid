@@ -7,13 +7,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import es.infolojo.newkeepitdroid.domain.sharedpreferences.ThemePreferences
 import es.infolojo.newkeepitdroid.db.NotesDB
 import es.infolojo.newkeepitdroid.domain.repository.LocalRepository
 import es.infolojo.newkeepitdroid.domain.usecase.DeleteNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.GetNotesUseCase
+import es.infolojo.newkeepitdroid.domain.usecase.GetThemeModeUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.InsertNoteUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.IsNoteAlReadyInDataBase
 import es.infolojo.newkeepitdroid.domain.usecase.SearchNotesUseCase
+import es.infolojo.newkeepitdroid.domain.usecase.SetThemeModeUseCase
 import es.infolojo.newkeepitdroid.domain.usecase.UpdateNoteUseCase
 
 @Module
@@ -54,4 +57,13 @@ object AppModule {
 
     @Provides
     fun provideSearchNotesUseCase(getNotesUseCase: GetNotesUseCase): SearchNotesUseCase = SearchNotesUseCase(getNotesUseCase)
+
+    @Provides
+    fun provideThemePreferences(@ApplicationContext context: Context): ThemePreferences = ThemePreferences(context)
+
+    @Provides
+    fun provideGetThemeModeUseCase(themePreferences: ThemePreferences): GetThemeModeUseCase = GetThemeModeUseCase(themePreferences)
+
+    @Provides
+    fun provideSetThemeModeUseCase(themePreferences: ThemePreferences): SetThemeModeUseCase = SetThemeModeUseCase(themePreferences)
 }
