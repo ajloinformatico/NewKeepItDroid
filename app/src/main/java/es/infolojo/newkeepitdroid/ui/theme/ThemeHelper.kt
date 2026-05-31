@@ -20,6 +20,7 @@ object ThemeHelper {
         scrolledContainerColor = getSurfaceBackGroundColor(),
         navigationIconContentColor = getContentPrimaryColor(),
         titleContentColor = getContentPrimaryColor(),
-        actionIconContentColor = getContentPrimaryColor()
+        actionIconContentColor = getContentPrimaryColor(),
+        subtitleContentColor = getContentPrimaryColor()
     )
 }

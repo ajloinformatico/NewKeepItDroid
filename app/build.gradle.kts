@@ -1,10 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
     // hilt
-    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 
     // ksp
@@ -13,12 +11,12 @@ plugins {
 
 android {
     namespace = "es.infolojo.newkeepitdroid"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "es.infolojo.newkeepitdroid"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -37,9 +35,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -63,7 +58,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
     // room

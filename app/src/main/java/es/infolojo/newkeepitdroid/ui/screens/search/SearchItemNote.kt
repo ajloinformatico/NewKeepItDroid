@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import es.infolojo.newkeepitdroid.R
 import es.infolojo.newkeepitdroid.ui.screens.vo.NoteVO
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 
 /**
  * Row of the search screen
@@ -68,6 +69,7 @@ fun SearchItemNote(
                 Column {
                     Text(
                         text = note?.title ?: stringResource(R.string.title),
+                        color = ThemeHelper.getContentPrimaryColor(),
                         style = TextStyle(lineHeight = 1.5.em),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -79,6 +81,7 @@ fun SearchItemNote(
                     )
                     Text(
                         text = note?.content ?: stringResource(R.string.note_content),
+                        color = ThemeHelper.getContentPrimaryColor(),
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 16.sp,
@@ -97,7 +100,7 @@ fun SearchItemNote(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = stringResource(R.string.go_to_detail),
-                        tint = Color.Gray
+                        tint = ThemeHelper.getContentPrimaryColor()
                     )
                 }
             }
