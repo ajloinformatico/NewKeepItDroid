@@ -1,6 +1,6 @@
 # NewKeepItDroid
 
-A Jetpack Compose note-taking Android app with Room / SQLite operations, real-time search, filtering, and a multi-column grid layout.
+A Jetpack Compose note-taking Android app with Room / SQLite operations, real-time search, filtering, multi-column grid layout, and manual dark/light theme toggle.
 
 ## Screenshots
 
@@ -86,6 +86,13 @@ A Jetpack Compose note-taking Android app with Room / SQLite operations, real-ti
 - **Delete confirmation** — "Are you sure you want to remove [title]?"
 - **Close app confirmation** — "Are you sure you want to close?"
 
+### Theme Toggle
+- Three modes: **System** (follows device), **Light**, **Dark** — toggled via a button in the top bar
+- Choice is persisted with **DataStore Preferences** and survives app restarts
+- Toggle logic handled by `HomeScreenViewModel` via `SetThemeModeUseCase`
+- Status bar icons adapt to the manually selected theme (white on dark, black on light)
+- `NewKeepItDroidTheme` uses the resolved `darkTheme` via `CompositionLocal` so all `ThemeHelper` utilities reflect the chosen mode
+
 ### Theming
 - Material3 dynamic colors on Android 12+
 - Dark / Light mode support
@@ -111,6 +118,9 @@ A Jetpack Compose note-taking Android app with Room / SQLite operations, real-ti
 ```
 app/src/main/java/es/infolojo/newkeepitdroid/
 ├── NewKeepItDroidApp.kt              # @HiltAndroidApp
+├── data/
+│   └── preferences/
+│       └── ThemePreferences.kt        # DataStore wrapper for theme mode
 ├── db/
 │   └── NotesDB.kt                     # Room Database
 ├── di/
@@ -129,9 +139,11 @@ app/src/main/java/es/infolojo/newkeepitdroid/
 │   └── usecase/
 │       ├── DeleteNoteUseCase.kt
 │       ├── GetNotesUseCase.kt
+│       ├── GetThemeModeUseCase.kt
 │       ├── InsertNoteUseCase.kt
 │       ├── IsNoteAlReadyInDataBase.kt
 │       ├── SearchNotesUseCase.kt
+│       ├── SetThemeModeUseCase.kt
 │       └── UpdateNoteUseCase.kt
 ├── navigation/
 │   ├── NewKeepItDroidNavHost.kt
@@ -151,8 +163,9 @@ app/src/main/java/es/infolojo/newkeepitdroid/
 │   └── theme/
 │       ├── Color.kt
 │       ├── Theme.kt
-│       ├── ThemeHelper.kt
-│       └── Type.kt
+    │       ├── ThemeHelper.kt
+    │       ├── ThemeMode.kt
+    │       └── Type.kt
 └── utils/
     ├── CalendarUtils.kt
     ├── ListExtensions.kt

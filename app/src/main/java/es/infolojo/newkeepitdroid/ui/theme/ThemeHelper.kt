@@ -27,7 +27,6 @@ object ThemeHelper {
         subtitleContentColor = getContentPrimaryColor()
     )
 
-
     fun updateSystemBarsAppearance(view: View, window: Window, isDark: Boolean) {
         val controller = WindowInsetsControllerCompat(window, view)
         controller.isAppearanceLightStatusBars = !isDark
