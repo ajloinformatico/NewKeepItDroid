@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +27,7 @@ import es.infolojo.newkeepitdroid.ui.activities.main.events.MainEvents
 import es.infolojo.newkeepitdroid.ui.screens.commons.RegularAlertDialogComponent
 import es.infolojo.newkeepitdroid.ui.screens.vo.UIMessagesVO
 import es.infolojo.newkeepitdroid.ui.theme.NewKeepItDroidTheme
+import es.infolojo.newkeepitdroid.ui.theme.ThemeHelper
 import es.infolojo.newkeepitdroid.ui.theme.ThemeMode
 import es.infolojo.newkeepitdroid.utils.ToastMaker
 import javax.inject.Inject
@@ -45,6 +47,12 @@ class MainActivity : ComponentActivity() {
             var showCloseAppDialog by rememberSaveable { mutableStateOf(false) }
             val themeMode by getThemeModeUseCase().collectAsState(initial = ThemeMode.SYSTEM)
             val isDark = themeMode.isDark(isSystemInDarkTheme())
+
+            ThemeHelper.updateSystemBarsAppearance(
+                view = LocalView.current,
+                window = this.window,
+                isDark = isDark
+            )
 
             NewKeepItDroidTheme(darkTheme = isDark) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
